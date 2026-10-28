@@ -1,4 +1,4 @@
-/**
+﻿/**
  * IJODKOR.UZ - Ma'lumotlar bazasi va Bulutli Sinxronlash tizimi
  * 
  * Yangilanishlar:
@@ -70,188 +70,8 @@ const TUMANLAR = [
 ];
 
 // Dastlabki namunaviy umumiy o'rta ta'lim maktab o'quvchilari
-const INITIAL_CREATORS = [
-  {
-    id: 'cre-1',
-    fullName: 'Madinabonu Ergasheva',
-    age: 16,
-    district: 'samarqand',
-    districtLabel: 'Samarqand shahri',
-    school: "15-umumiy o'rta ta'lim maktabi",
-    bio: "Ko'rik-tanlovlar g'olibi. Davlat tadbirlarida yakkaxon chiqishlar qilgan iqtidorli maktab o'quvchisi.",
-    phone: '+998 90 123 45 67',
-    videoType: 'youtube',
-    videoUrl: 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
-    videoEmbedUrl: 'https://www.youtube.com/embed/ysz5S6PUM-U',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    coins: 185,
-    eventsCount: 5,
-    eventsHistory: [
-      { id: 'ev-1', eventName: "Navro'z umumxalq sayli 2026", coinsAwarded: 50, date: '2026-03-21', note: 'Bosh maydondagi yakkaxon chiqish uchun' },
-      { id: 'ev-2', eventName: 'Xalqaro Yoshlar forumi', coinsAwarded: 40, date: '2026-04-12', note: 'Ochilish marosimidagi faol ishtirok' },
-      { id: 'ev-3', eventName: 'Xotira va qadrlash konserti', coinsAwarded: 35, date: '2026-05-09', note: "Vatanparvarlik chiqishi" },
-      { id: 'ev-4', eventName: 'Yoshlar kuni gala-konserti', coinsAwarded: 30, date: '2026-06-30', note: 'Katta sahna chiqishi' },
-      { id: 'ev-5', eventName: "Sharq taronalari yo'ldoshi", coinsAwarded: 30, date: '2026-08-25', note: "Shahar bosqichidagi muvaffaqiyat" }
-    ],
-    createdAt: '2026-01-15'
-  },
-  {
-    id: 'cre-2',
-    fullName: 'Jasurbek Rahimov',
-    age: 17,
-    district: 'chilonzor',
-    districtLabel: 'Chilonzor tumani',
-    school: "28-umumiy o'rta ta'lim maktabi",
-    bio: "Maktab yosh iqtidorlari ko'rik-tanlovi g'olibi. Jonli ijro mahorati yuqori, shahar tadbirlari faol ishtirokchisi.",
-    phone: '+998 93 456 78 90',
-    videoType: 'youtube',
-    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    videoEmbedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    coins: 160,
-    eventsCount: 4,
-    eventsHistory: [
-      { id: 'ev-6', eventName: "Navro'z tantanalari", coinsAwarded: 50, date: '2026-03-21', note: "Maktab jamoasi bilan chiqish" },
-      { id: 'ev-7', eventName: 'Madaniyat va sanʼat haftaligi', coinsAwarded: 40, date: '2026-05-18', note: 'Mahorat darsi va konsert' },
-      { id: 'ev-8', eventName: 'Mustaqillik shukuhi', coinsAwarded: 40, date: '2026-09-01', note: 'Katta sahna chiqishi' },
-      { id: 'ev-9', eventName: 'Ustozlar kuni bayrami', coinsAwarded: 30, date: '2026-10-01', note: 'Konsert dasturi' }
-    ],
-    createdAt: '2026-01-20'
-  },
-  {
-    id: 'cre-3',
-    fullName: 'Dilshodbek Qobilov',
-    age: 16,
-    district: 'fargona',
-    districtLabel: "Farg'ona shahri",
-    school: "14-umumiy o'rta ta'lim maktabi",
-    bio: "Sahna mahorati, notiqlik va ijodiy ifodada tengdoshlari orasida peshqadam o'quvchi.",
-    phone: '+998 94 987 65 43',
-    videoType: 'telegram',
-    videoUrl: 'https://t.me/madaniyat_yoshlari/104',
-    videoEmbedUrl: '',
-    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
-    coins: 135,
-    eventsCount: 3,
-    eventsHistory: [
-      { id: 'ev-10', eventName: 'Yoshlar festivali', coinsAwarded: 50, date: '2026-03-27', note: 'Eng yaxshi chiqish uchun' },
-      { id: 'ev-11', eventName: "Navoiyxonlik kechasi", coinsAwarded: 45, date: '2026-02-09', note: 'Maktab adabiy chiqishi' },
-      { id: 'ev-12', eventName: 'Yoshlar oyligi konserti', coinsAwarded: 40, date: '2026-06-25', note: 'Sahna ko\'rinishi' }
-    ],
-    createdAt: '2026-02-01'
-  },
-  {
-    id: 'cre-4',
-    fullName: 'Rayhonaxon Karimova',
-    age: 15,
-    district: 'buxoro',
-    districtLabel: 'Buxoro shahri',
-    school: "22-umumiy o'rta ta'lim maktabi",
-    bio: "O'zining ijodkorligi, she'riyatga mehri va faolligi bilan tanilgan namunali o'quvchi.",
-    phone: '+998 91 333 44 55',
-    videoType: 'youtube',
-    videoUrl: 'https://www.youtube.com/watch?v=kJQP7kiw5Fk',
-    videoEmbedUrl: 'https://www.youtube.com/embed/kJQP7kiw5Fk',
-    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80',
-    coins: 120,
-    eventsCount: 3,
-    eventsHistory: [
-      { id: 'ev-13', eventName: 'Kitobxonlik forumi', coinsAwarded: 40, date: '2026-04-23', note: 'Taqdimot chiqishi' },
-      { id: 'ev-14', eventName: "Bahor nafasi tadbiri", coinsAwarded: 45, date: '2026-03-01', note: 'Badiiy kecha' },
-      { id: 'ev-15', eventName: 'Til - millat g\'ururi kechasi', coinsAwarded: 35, date: '2026-10-21', note: 'Ifodali badiiy chiqish' }
-    ],
-    createdAt: '2026-02-15'
-  },
-  {
-    id: 'cre-5',
-    fullName: 'Sardorbek Olimov',
-    age: 17,
-    district: 'andijon',
-    districtLabel: 'Andijon shahri',
-    school: "35-umumiy o'rta ta'lim maktabi",
-    bio: "Tadbirlarni boshqarish, boshlovchilik va jamoat ishlari bo'yicha maktab yetakchisi.",
-    phone: '+998 99 876 54 32',
-    videoType: 'telegram',
-    videoUrl: 'https://t.me/madaniyat_yoshlari/215',
-    videoEmbedUrl: '',
-    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80',
-    coins: 105,
-    eventsCount: 3,
-    eventsHistory: [
-      { id: 'ev-16', eventName: 'Yoshlar haftaligi festivali', coinsAwarded: 40, date: '2026-05-15', note: 'Bosh sahna boshlovchisi' },
-      { id: 'ev-17', eventName: 'Maktablar ligasi finali', coinsAwarded: 35, date: '2026-06-10', note: 'Jonli dastur boshlovchisi' },
-      { id: 'ev-18', eventName: 'Barkamol avlod shousi', coinsAwarded: 30, date: '2026-09-18', note: 'Konsert boshlovchisi' }
-    ],
-    createdAt: '2026-02-28'
-  },
-  {
-    id: 'cre-6',
-    fullName: 'Sevinch Rustamova',
-    age: 15,
-    district: 'urganch',
-    districtLabel: 'Urganch shahri',
-    school: "9-umumiy o'rta ta'lim maktabi",
-    bio: "O'zbek xalq qo'shiqlari va milliy an'analarni ifodalovchi yosh iqtidor sohibasi.",
-    phone: '+998 90 888 77 66',
-    videoType: 'youtube',
-    videoUrl: 'https://www.youtube.com/watch?v=3JZ_D3ELwOQ',
-    videoEmbedUrl: 'https://www.youtube.com/embed/3JZ_D3ELwOQ',
-    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-    coins: 170,
-    eventsCount: 4,
-    eventsHistory: [
-      { id: 'ev-19', eventName: "Lazgi ko'rik-tanlovi", coinsAwarded: 50, date: '2026-04-28', note: 'Yakkaxon chiqish va yuksak e\'tirof' },
-      { id: 'ev-20', eventName: "Navro'z tarannumi", coinsAwarded: 45, date: '2026-03-21', note: 'Konsert dasturi' },
-      { id: 'ev-21', eventName: 'Mustaqillik maydoni konserti', coinsAwarded: 45, date: '2026-09-01', note: 'Maktab jamoasi bilan' },
-      { id: 'ev-22', eventName: 'Hunarmandlar yarmarkasi tantanasi', coinsAwarded: 30, date: '2026-10-10', note: 'Mehmonlar oldida chiqish' }
-    ],
-    createdAt: '2026-01-18'
-  },
-  {
-    id: 'cre-7',
-    fullName: 'Shahzoda Alimova',
-    age: 16,
-    district: 'qarshi',
-    districtLabel: 'Qarshi shahri',
-    school: "12-umumiy o'rta ta'lim maktabi",
-    bio: "Maktab bayramlari va viloyat yoshlar tadbirlari faol ishtirokchisi.",
-    phone: '+998 97 555 44 11',
-    videoType: 'telegram',
-    videoUrl: 'https://t.me/madaniyat_yoshlari/302',
-    videoEmbedUrl: '',
-    avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80',
-    coins: 145,
-    eventsCount: 4,
-    eventsHistory: [
-      { id: 'ev-23', eventName: 'Voha tarannumi festivali', coinsAwarded: 40, date: '2026-05-02', note: 'Milliy chiqish' },
-      { id: 'ev-24', eventName: 'Navro\'z sayli', coinsAwarded: 35, date: '2026-03-21', note: 'Maktab sardori' },
-      { id: 'ev-25', eventName: 'Amir Temur xotira kechasi', coinsAwarded: 35, date: '2026-04-09', note: 'Tarixiy sahna chiqishi' },
-      { id: 'ev-26', eventName: 'Oltin nihol musobaqasi', coinsAwarded: 35, date: '2026-09-22', note: 'G\'oliblik chiqishi' }
-    ],
-    createdAt: '2026-02-10'
-  },
-  {
-    id: 'cre-8',
-    fullName: 'Bekzodbek Yusupov',
-    age: 17,
-    district: 'namangan',
-    districtLabel: 'Namangan shahri',
-    school: "5-umumiy o'rta ta'lim maktabi",
-    bio: "Sahna san'ati, kulgu va pantomima janrida qobiliyatli maktab o'quvchisi.",
-    phone: '+998 93 222 33 44',
-    videoType: 'youtube',
-    videoUrl: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ',
-    videoEmbedUrl: 'https://www.youtube.com/embed/fJ9rUzIMcZQ',
-    avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=400&q=80',
-    coins: 90,
-    eventsCount: 2,
-    eventsHistory: [
-      { id: 'ev-27', eventName: 'Quvnoqlar va zukkolar bellashuvi', coinsAwarded: 45, date: '2026-04-01', note: 'Sahna intermediyasi' },
-      { id: 'ev-28', eventName: 'Bolalar kuni konserti', coinsAwarded: 45, date: '2026-06-01', note: 'Maktab chiqishi' }
-    ],
-    createdAt: '2026-03-05'
-  }
-];
+// Baza toza va yangi: dastlabki namuna o'quvchilar yo'q
+const INITIAL_CREATORS = [];
 
 // Admin tomonidan e'lon qilinadigan tanlovlar
 const INITIAL_CONTESTS = [
@@ -309,33 +129,35 @@ const INITIAL_CHALLENGES = [
 ];
 
 // Chellenjlarga topshirilgan dastlabki namunaviy video roliklar
-const INITIAL_SUBMISSIONS = [
-  {
-    id: 'sub-1',
-    challengeId: 'chl-1',
-    challengeTitle: "Vatanparvarlik va Ona Yurtim Mavzusida Video Rolik Chellenji",
-    creatorId: 'cre-2',
-    creatorName: 'Jasurbek Rahimov',
-    creatorSchool: "28-umumiy o'rta ta'lim maktabi",
-    creatorDistrict: 'Chilonzor tumani',
-    creatorPhone: '+998 93 456 78 90',
-    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    videoType: 'youtube',
-    participants: "Jasurbek Rahimov (boshlovchi), Shahzod Aliyev (video montaj), Malika Karimova (she'r o'qigan)",
-    note: "Maktabimiz bog'ida 28-maktab o'quvchilari bilan tayyorlangan maxsus kompozitsiya.",
-    submittedAt: '2026-10-27',
-    status: 'approved', // 'pending' yoki 'approved'
-    coinsAwarded: 60,
-    adminNote: "A'lo darajada sahnalashtirilgan video rolik! Barcha ishtirokchilar nomidan tangalar hisoblandi."
-  }
-];
+// Namunaviy video roliklar tozalandi
+const INITIAL_SUBMISSIONS = [];
 
-// Bulutli Sinxronlash (Cloud Sync)
+// ==========================================================================
+// MASTER SERVER VA REAL-TIME GLOBAL SINXRONLASH (GUN DB + CLOUD RELAY)
+// ==========================================================================
+
+function serializeForGun(item) {
+  if (!item) return {};
+  const clean = { ...item };
+  if (Array.isArray(clean.eventsHistory)) {
+    try { clean.eventsHistory = JSON.stringify(clean.eventsHistory); } catch (e) { clean.eventsHistory = '[]'; }
+  }
+  return clean;
+}
+
+function deserializeFromGun(item) {
+  if (!item) return {};
+  const clean = { ...item };
+  if (typeof clean.eventsHistory === 'string') {
+    try { clean.eventsHistory = JSON.parse(clean.eventsHistory); } catch (e) { clean.eventsHistory = []; }
+  }
+  return clean;
+}
+
 const CloudSync = {
-  endpoint: 'https://jsonblob.com/api/jsonBlob',
-  storageKeyId: STORAGE_KEY_CLOUD_ID,
-  currentBlobId: null,
-  isSyncing: false,
+  masterChannel: 'ijodkor_uz_master_v2026',
+  gun: null,
+  gunHub: null,
   isOnline: true,
   lastSyncTime: null,
   statusListeners: [],
@@ -350,177 +172,171 @@ const CloudSync = {
     });
   },
 
-  async init() {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlSyncId = urlParams.get('sync');
-      if (urlSyncId && urlSyncId.trim().length > 5) {
-        this.currentBlobId = urlSyncId.trim();
-        localStorage.setItem(this.storageKeyId, this.currentBlobId);
-      } else {
-        this.currentBlobId = localStorage.getItem(this.storageKeyId) || null;
-      }
-    } catch (e) {
-      this.currentBlobId = localStorage.getItem(this.storageKeyId) || null;
-    }
+  init() {
+    this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
 
-    if (this.currentBlobId) {
-      await this.pull();
-    } else {
-      await this.createBlob();
-    }
+    if (typeof Gun !== 'undefined') {
+      try {
+        this.gun = Gun({
+          peers: [
+            'https://gun-manhattan.herokuapp.com/gun',
+            'https://relay.peer.ooo/gun',
+            'https://peer.wallie.io/gun'
+          ]
+        });
+        this.gunHub = this.gun.get(this.masterChannel);
 
-    setInterval(() => {
-      this.pull(true);
-    }, 12000);
-  },
-
-  async createBlob() {
-    if (this.isSyncing) return;
-    try {
-      this.isSyncing = true;
-      this.notify({ status: 'syncing', text: 'Serverga ulanmoqda...' });
-
-      const payload = {
-        creators: DataStore.getCreators(),
-        contests: DataStore.getContests(),
-        challenges: DataStore.getChallenges(),
-        submissions: DataStore.getChallengeSubmissions(),
-        inbox: DataStore.getAdminInbox(),
-        staff: DataStore.getStaffList(),
-        visitors: DataStore.getVisitorStats(),
-        updatedAt: new Date().toISOString()
-      };
-
-      const res = await fetch(this.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        let blobId = '';
-        const loc = res.headers.get('Location');
-        if (loc) {
-          const parts = loc.split('/');
-          blobId = parts[parts.length - 1];
-        } else {
-          const bodyData = await res.json();
-          blobId = bodyData.id || '';
-        }
-
-        if (blobId) {
-          this.currentBlobId = blobId;
-          localStorage.setItem(this.storageKeyId, blobId);
-          this.lastSyncTime = new Date();
-          this.notify({ status: 'connected', text: 'Serverga ulangan', blobId: blobId });
-        }
-      }
-    } catch (e) {
-      this.notify({ status: 'offline', text: 'Oflayn (Mahalliy)' });
-    } finally {
-      this.isSyncing = false;
-    }
-  },
-
-  async pull(isBackground = false) {
-    if (!this.currentBlobId || this.isSyncing) return;
-    try {
-      this.isSyncing = true;
-      if (!isBackground) {
-        this.notify({ status: 'syncing', text: 'Serverdan yuklanmoqda...' });
-      }
-
-      const res = await fetch(`${this.endpoint}/${this.currentBlobId}`, {
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.creators)) {
-          localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(data.creators));
-          if (Array.isArray(data.contests)) localStorage.setItem(STORAGE_KEY_CONTESTS, JSON.stringify(data.contests));
-          if (Array.isArray(data.challenges)) localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(data.challenges));
-          if (Array.isArray(data.submissions)) localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(data.submissions));
-          if (Array.isArray(data.inbox)) localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(data.inbox));
-          if (Array.isArray(data.staff)) localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(data.staff));
-          if (data.visitors) localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(data.visitors));
-
-          this.lastSyncTime = new Date();
-          this.notify({ status: 'connected', text: 'Serverga ulangan', blobId: this.currentBlobId, updated: true });
-          
-          if (window.App && typeof window.App.refreshAllUI === 'function') {
-            window.App.refreshAllUI();
+        // 1. Yangi o'quvchilarni real vaqtda eshitish va qabul qilish
+        this.gunHub.get('creators').map().on((creator, key) => {
+          if (creator && creator.id) {
+            DataStore.mergeRemoteCreator(creator);
           }
-        }
+        });
+
+        // 2. Video rolik (chellenj)larni real vaqtda eshitish
+        this.gunHub.get('submissions').map().on((sub, key) => {
+          if (sub && sub.id) {
+            DataStore.mergeRemoteSubmission(sub);
+          }
+        });
+
+        // 3. Madaniyat xodimlarini real vaqtda eshitish
+        this.gunHub.get('staff').map().on((stf, key) => {
+          if (stf && stf.id) {
+            DataStore.mergeRemoteStaff(stf);
+          }
+        });
+
+        // Dastlabki lokal ma'lumotlarni serverga uzatib qo'yish
+        setTimeout(() => {
+          this.syncLocalToCloud();
+        }, 1200);
+
+        this.lastSyncTime = new Date();
+        this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
+      } catch (e) {
+        console.warn('GunDB ulanishda ogohlantirish:', e);
+        this.notify({ status: 'connected', text: 'Server: Faol (Mahalliy)', mode: 'Local' });
       }
-    } catch (e) {
-      if (!isBackground) {
-        this.notify({ status: 'offline', text: 'Oflayn rejim' });
-      }
-    } finally {
-      this.isSyncing = false;
+    } else {
+      this.notify({ status: 'connected', text: 'Server: Faol', mode: 'Local' });
     }
   },
 
-  async push() {
-    if (!this.currentBlobId) {
-      await this.createBlob();
-      return;
-    }
+  syncLocalToCloud() {
+    if (!this.gunHub) return;
     try {
-      this.isSyncing = true;
-      this.notify({ status: 'syncing', text: 'Serverga saqlanmoqda...' });
-
-      const payload = {
-        creators: DataStore.getCreators(),
-        contests: DataStore.getContests(),
-        challenges: DataStore.getChallenges(),
-        submissions: DataStore.getChallengeSubmissions(),
-        inbox: DataStore.getAdminInbox(),
-        staff: DataStore.getStaffList(),
-        visitors: DataStore.getVisitorStats(),
-        updatedAt: new Date().toISOString()
-      };
-
-      const res = await fetch(`${this.endpoint}/${this.currentBlobId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
+      const creators = DataStore.getCreators();
+      creators.forEach(c => {
+        this.broadcastCreator(c);
       });
-
-      if (res.ok) {
-        this.lastSyncTime = new Date();
-        this.notify({ status: 'connected', text: 'Serverga saqlandi', blobId: this.currentBlobId });
-      }
+      const submissions = DataStore.getChallengeSubmissions();
+      submissions.forEach(s => {
+        this.broadcastSubmission(s);
+      });
+      const staff = DataStore.getStaffList();
+      staff.forEach(st => {
+        this.broadcastStaff(st);
+      });
     } catch (e) {
-      this.notify({ status: 'offline', text: 'Mahalliy saqlandi (Oflayn)' });
-    } finally {
-      this.isSyncing = false;
+      console.warn('Lokal ma\'lumotlarni serverga yuborishda ogohlantirish:', e);
     }
+  },
+
+  broadcastCreator(creator) {
+    if (!this.gunHub || !creator || !creator.id) return;
+    try {
+      const clean = serializeForGun(creator);
+      clean.updatedAt = new Date().toISOString();
+      this.gunHub.get('creators').get(creator.id).put(clean);
+    } catch (e) {
+      console.error('Gun broadcastCreator xatosi:', e);
+    }
+  },
+
+  broadcastDeleteCreator(creatorId) {
+    if (!this.gunHub || !creatorId) return;
+    try {
+      this.gunHub.get('creators').get(creatorId).put({ id: creatorId, _deleted: true, updatedAt: new Date().toISOString() });
+    } catch (e) {}
+  },
+
+  broadcastSubmission(sub) {
+    if (!this.gunHub || !sub || !sub.id) return;
+    try {
+      const clean = { ...sub, updatedAt: new Date().toISOString() };
+      this.gunHub.get('submissions').get(sub.id).put(clean);
+    } catch (e) {}
+  },
+
+  broadcastStaff(staff) {
+    if (!this.gunHub || !staff || !staff.id) return;
+    try {
+      const clean = { ...staff, updatedAt: new Date().toISOString() };
+      this.gunHub.get('staff').get(staff.id).put(clean);
+    } catch (e) {}
+  },
+
+  async pull() {
+    this.notify({ status: 'syncing', text: 'Serverdan yangilanmoqda...' });
+    if (this.gunHub) {
+      this.syncLocalToCloud();
+    }
+    setTimeout(() => {
+      this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
+      if (window.App && typeof window.App.refreshAllUI === 'function') {
+        window.App.refreshAllUI();
+      }
+    }, 500);
+  },
+
+  push() {
+    this.syncLocalToCloud();
   },
 
   getShareUrl() {
-    const base = window.location.origin + window.location.pathname;
-    return this.currentBlobId ? `${base}?sync=${this.currentBlobId}` : base;
+    return window.location.origin + window.location.pathname;
   }
 };
 
 // Data Layer funksiyalari
 const DataStore = {
   init() {
-    if (localStorage.getItem('ijodkor_demo_cleared') === 'true') {
-      if (localStorage.getItem(STORAGE_KEY_CREATORS) === null) {
+    // 1. Dastlabki namuna o'quvchilarni (cre-1...cre-10) avtomatik tozalash
+    try {
+      let rawCreators = localStorage.getItem(STORAGE_KEY_CREATORS);
+      if (rawCreators) {
+        let creators = JSON.parse(rawCreators);
+        if (Array.isArray(creators)) {
+          const demoIds = ['cre-1', 'cre-2', 'cre-3', 'cre-4', 'cre-5', 'cre-6', 'cre-7', 'cre-8', 'cre-9', 'cre-10'];
+          const filtered = creators.filter(c => !demoIds.includes(c.id));
+          if (filtered.length !== creators.length) {
+            localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(filtered));
+          }
+        }
+      } else {
         localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify([]));
       }
-    } else if (!localStorage.getItem(STORAGE_KEY_CREATORS)) {
-      localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(INITIAL_CREATORS));
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify([]));
+    }
+
+    // 2. Namuna chellenj videosini (sub-1) avtomatik tozalash
+    try {
+      let rawSubs = localStorage.getItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS);
+      if (rawSubs) {
+        let subs = JSON.parse(rawSubs);
+        if (Array.isArray(subs)) {
+          const filteredSubs = subs.filter(s => s.id !== 'sub-1');
+          if (filteredSubs.length !== subs.length) {
+            localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(filteredSubs));
+          }
+        }
+      } else {
+        localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify([]));
+      }
+    } catch (e) {
+      localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(STORAGE_KEY_CONTESTS)) {
       localStorage.setItem(STORAGE_KEY_CONTESTS, JSON.stringify(INITIAL_CONTESTS));
@@ -603,6 +419,81 @@ const DataStore = {
     if (!newName || !newName.trim()) return false;
     localStorage.setItem(STORAGE_KEY_ADMIN_NAME, newName.trim());
     return true;
+  },
+
+    // ================= MASTER SERVER INTEGRATSIYASI =================
+  mergeRemoteCreator(remoteCreator) {
+    if (!remoteCreator || !remoteCreator.id) return;
+    if (remoteCreator._deleted) {
+      let creators = this.getCreators().filter(c => c.id !== remoteCreator.id);
+      localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(creators));
+      if (window.App && typeof window.App.refreshAllUI === 'function') {
+        window.App.refreshAllUI();
+      }
+      return;
+    }
+
+    const creator = deserializeFromGun(remoteCreator);
+    let creators = this.getCreators();
+    const idx = creators.findIndex(c => c.id === creator.id);
+
+    let changed = false;
+    if (idx >= 0) {
+      const local = creators[idx];
+      const localTime = new Date(local.updatedAt || local.createdAt || 0).getTime();
+      const remoteTime = new Date(creator.updatedAt || creator.createdAt || 0).getTime();
+      if (remoteTime > localTime || (creator.coins || 0) > (local.coins || 0) || (creator.eventsCount || 0) > (local.eventsCount || 0)) {
+        creators[idx] = { ...local, ...creator };
+        changed = true;
+      }
+    } else {
+      creators.unshift(creator);
+      changed = true;
+    }
+
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(creators));
+      if (window.App && typeof window.App.refreshAllUI === 'function') {
+        window.App.refreshAllUI();
+      }
+    }
+  },
+
+  mergeRemoteSubmission(remoteSub) {
+    if (!remoteSub || !remoteSub.id || remoteSub._deleted) return;
+    let subs = this.getChallengeSubmissions();
+    const idx = subs.findIndex(s => s.id === remoteSub.id);
+    let changed = false;
+    if (idx >= 0) {
+      if (remoteSub.status === 'approved' && subs[idx].status !== 'approved') {
+        subs[idx] = { ...subs[idx], ...remoteSub };
+        changed = true;
+      }
+    } else {
+      subs.unshift(remoteSub);
+      changed = true;
+    }
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(subs));
+      if (window.App && typeof window.App.renderChallenges === 'function') {
+        window.App.renderChallenges();
+        window.App.renderAdminSection();
+      }
+    }
+  },
+
+  mergeRemoteStaff(remoteStaff) {
+    if (!remoteStaff || !remoteStaff.id || remoteStaff._deleted) return;
+    let staff = this.getStaffList();
+    const idx = staff.findIndex(s => s.id === remoteStaff.id || (s.phone && s.phone === remoteStaff.phone));
+    if (idx < 0) {
+      staff.unshift(remoteStaff);
+      localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(staff));
+      if (window.App && typeof window.App.renderStaffSection === 'function') {
+        window.App.renderStaffSection();
+        window.App.renderAdminSection();
+      }
+    }
   },
 
   // 3. O'QUVCHILAR BAZASI

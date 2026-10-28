@@ -93,7 +93,7 @@ const App = {
     const shareUrl = CloudSync.getShareUrl();
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl).then(() => {
-        this.showToast("Havola nusxalandi! Buni boshqa telefonga tashlang.", "success");
+        this.showToast("Sayt havolasi nusxalandi! Buni istalgan odamga yuboring — hamma bitta umumiy serverga ulanadi.", "success");
       });
     } else {
       prompt("Ushbu havolani nusxalab oling:", shareUrl);

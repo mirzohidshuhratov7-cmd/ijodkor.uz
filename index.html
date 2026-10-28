@@ -12,6 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- GunDB - Realtime Serverless Global Master Database -->
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
   <!-- Maxsus uslublar -->
   <link rel="stylesheet" href="css/style.css">
   <script>
@@ -532,7 +534,7 @@
 
             <div class="flex items-center gap-2.5 flex-wrap pt-2 border-t border-indigo-900/60">
               <button onclick="App.copyShareLink()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2">
-                <i class="fa-solid fa-mobile-screen-button"></i> Boshqa Telefonga Ulanish Havolasini Nusxalash
+                <i class="fa-solid fa-share-nodes"></i> Umumiy Sayt Havolasini Nusxalash
               </button>
               <button onclick="App.handleManualSync()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2">
                 <i class="fa-solid fa-rotate"></i> Serverdan Darhol Yangilash
@@ -1036,7 +1038,7 @@
           <label class="block text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5">
             <i class="fa-solid fa-users text-red-600"></i> Video Rolikda Kimlar Qatnashgan? (To'liq Yozing) *
           </label>
-          <textarea id="sub-participants" required rows="3" placeholder="Masalan: 1. Sardor Aliyev (boshlovchi), 2. Jasur Rahimov (musiqa), 3. Malika Karimova (she'r), 10-'A' sinf ijodiy guruhi..." class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white focus:outline-none"></textarea>
+          <textarea id="sub-participants" required rows="3" placeholder="Masalan: 1. Sardor Aliyev (boshlovchi), 2. Malika Karimova (ijrochi), 10-'A' sinf ijodiy guruhi..." class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:bg-white focus:outline-none"></textarea>
           <p class="text-[11px] text-slate-500 mt-1">Admin barcha ishtirokchilarni ko'rib chiqib, ularga tanga taqdim etadi.</p>
         </div>
 
