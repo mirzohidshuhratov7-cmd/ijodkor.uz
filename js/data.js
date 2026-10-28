@@ -1,4 +1,4 @@
-﻿/**
+/**
  * IJODKOR.UZ - Ma'lumotlar bazasi va Bulutli Sinxronlash tizimi
  * 
  * Yangilanishlar:
@@ -155,7 +155,7 @@ function deserializeFromGun(item) {
 }
 
 const CloudSync = {
-  masterChannel: 'ijodkor_uz_master_v2026',
+  masterChannel: 'ijodkor_uz_live_v3',
   gun: null,
   gunHub: null,
   isOnline: true,
@@ -302,6 +302,27 @@ const CloudSync = {
 // Data Layer funksiyalari
 const DataStore = {
   init() {
+    // 0. To'liq tozalash migratsiyasi: eski namuna ma'lumotlar va hisoblagichlarni batamom tozalash
+    try {
+      if (localStorage.getItem('ijodkor_clean_v3_fresh') !== 'done') {
+        localStorage.removeItem(STORAGE_KEY_VISITORS);
+        localStorage.removeItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS);
+        let rawCreators = localStorage.getItem(STORAGE_KEY_CREATORS);
+        if (rawCreators) {
+          let creators = JSON.parse(rawCreators);
+          if (Array.isArray(creators)) {
+            const demoIds = ['cre-1', 'cre-2', 'cre-3', 'cre-4', 'cre-5', 'cre-6', 'cre-7', 'cre-8', 'cre-9', 'cre-10'];
+            creators = creators.filter(c => c && !demoIds.includes(c.id));
+            localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(creators));
+          }
+        }
+        localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify([]));
+        localStorage.setItem('ijodkor_clean_v3_fresh', 'done');
+      }
+    } catch (e) {
+      console.warn('Migratsiya xatosi:', e);
+    }
+
     // 1. Dastlabki namuna o'quvchilarni (cre-1...cre-10) avtomatik tozalash
     try {
       let rawCreators = localStorage.getItem(STORAGE_KEY_CREATORS);
@@ -309,7 +330,7 @@ const DataStore = {
         let creators = JSON.parse(rawCreators);
         if (Array.isArray(creators)) {
           const demoIds = ['cre-1', 'cre-2', 'cre-3', 'cre-4', 'cre-5', 'cre-6', 'cre-7', 'cre-8', 'cre-9', 'cre-10'];
-          const filtered = creators.filter(c => !demoIds.includes(c.id));
+          const filtered = creators.filter(c => c && !demoIds.includes(c.id));
           if (filtered.length !== creators.length) {
             localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(filtered));
           }
@@ -327,7 +348,7 @@ const DataStore = {
       if (rawSubs) {
         let subs = JSON.parse(rawSubs);
         if (Array.isArray(subs)) {
-          const filteredSubs = subs.filter(s => s.id !== 'sub-1');
+          const filteredSubs = subs.filter(s => s && s.id !== 'sub-1' && s.creatorName !== 'Jasurbek Rahimov');
           if (filteredSubs.length !== subs.length) {
             localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(filteredSubs));
           }
@@ -345,7 +366,7 @@ const DataStore = {
       localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(INITIAL_CHALLENGES));
     }
     if (!localStorage.getItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS)) {
-      localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(INITIAL_SUBMISSIONS));
+      localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(STORAGE_KEY_ADMIN_PIN)) {
       localStorage.setItem(STORAGE_KEY_ADMIN_PIN, '7777');
@@ -359,7 +380,7 @@ const DataStore = {
     this.recordVisit();
   },
 
-  // 1. OYLIK TASHRIF VA QIZIQIB BORUVCHILAR STATISTIKASI
+  // 1. OYLIK TASHRIF VA QIZIQIB BORUVCHILAR STATISTIKASI (HAQIQIY HISOB)
   recordVisit() {
     const currentMonthKey = new Date().toISOString().slice(0, 7); // e.g. "2026-10"
     let stats = {};
@@ -371,11 +392,11 @@ const DataStore = {
 
     if (!stats.monthly) stats.monthly = {};
     if (!stats.monthly[currentMonthKey]) {
-      stats.monthly[currentMonthKey] = 340; // Boshlang'ich qiziqish bazasi
+      stats.monthly[currentMonthKey] = 0;
     }
 
     stats.monthly[currentMonthKey] += 1;
-    stats.total = (stats.total || 2450) + 1;
+    stats.total = (stats.total || 0) + 1;
     stats.lastVisit = new Date().toISOString();
 
     localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(stats));
@@ -384,12 +405,13 @@ const DataStore = {
 
   getVisitorStats() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY_VISITORS)) || {
-        total: 2450,
-        monthly: { "2026-10": 340 }
-      };
+      const stats = JSON.parse(localStorage.getItem(STORAGE_KEY_VISITORS));
+      if (stats && typeof stats.total === 'number') {
+        return stats;
+      }
+      return { total: 0, monthly: {} };
     } catch (e) {
-      return { total: 2450, monthly: {} };
+      return { total: 0, monthly: {} };
     }
   },
 
@@ -424,6 +446,8 @@ const DataStore = {
     // ================= MASTER SERVER INTEGRATSIYASI =================
   mergeRemoteCreator(remoteCreator) {
     if (!remoteCreator || !remoteCreator.id) return;
+    const demoIds = ['cre-1', 'cre-2', 'cre-3', 'cre-4', 'cre-5', 'cre-6', 'cre-7', 'cre-8', 'cre-9', 'cre-10'];
+    if (demoIds.includes(remoteCreator.id)) return;
     if (remoteCreator._deleted) {
       let creators = this.getCreators().filter(c => c.id !== remoteCreator.id);
       localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(creators));
@@ -461,6 +485,7 @@ const DataStore = {
 
   mergeRemoteSubmission(remoteSub) {
     if (!remoteSub || !remoteSub.id || remoteSub._deleted) return;
+    if (remoteSub.id === 'sub-1' || remoteSub.creatorName === 'Jasurbek Rahimov') return;
     let subs = this.getChallengeSubmissions();
     const idx = subs.findIndex(s => s.id === remoteSub.id);
     let changed = false;

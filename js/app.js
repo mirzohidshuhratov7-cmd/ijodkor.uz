@@ -1215,6 +1215,28 @@ const App = {
 
     const leaderboard = DataStore.getLeaderboard();
 
+    if (leaderboard.length === 0) {
+      podiumContainer.innerHTML = `
+        <div class="col-span-full py-10 px-6 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+            <i class="fa-solid fa-crown"></i>
+          </div>
+          <h4 class="font-bold text-slate-800 text-sm">Hozircha reyting jadvali shakllanmagan</h4>
+          <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+            O'quvchilar ro'yxatdan o'tib, tanlov va chellenjlarda faol qatnashgach, to'plangan tangalar bo'yicha ushbu shohsupa va reyting jadvali avtomatik hisoblab boriladi.
+          </p>
+        </div>
+      `;
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="7" class="px-6 py-8 text-center text-slate-400 text-xs">
+            Hozircha ro'yxatda o'quvchilar mavjud emas.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
     if (leaderboard.length >= 3) {
       const first = leaderboard[0];
       const second = leaderboard[1];
@@ -1264,6 +1286,43 @@ const App = {
             <span class="text-sm font-black text-orange-950">🪙 ${third.coins} Tanga</span>
             <span class="text-[10px] text-orange-800/80 block">${third.eventsCount} ta tadbir</span>
           </div>
+        </div>
+      `;
+    } else {
+      const first = leaderboard[0];
+      const second = leaderboard[1];
+      podiumContainer.innerHTML = `
+        <div class="col-span-full flex flex-wrap items-center justify-center gap-6 py-4">
+          <div class="podium-card podium-1 p-6 rounded-3xl text-center flex flex-col justify-between w-72 h-[310px] shadow-lg shadow-amber-500/10">
+            <div>
+              <div class="w-12 h-12 rounded-full bg-amber-400 text-amber-950 flex items-center justify-center font-black mx-auto mb-2 text-lg border-2 border-white shadow-md">
+                <i class="fa-solid fa-crown text-amber-900"></i>
+              </div>
+              <img src="${first.avatarUrl}" class="w-20 h-20 rounded-full mx-auto object-cover border-4 border-amber-400 shadow-md mb-2" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80'">
+              <h4 class="font-black text-slate-900 text-base truncate">${first.fullName}</h4>
+              <span class="text-xs text-amber-800 font-medium block truncate">${first.school} • ${first.districtLabel}</span>
+            </div>
+            <div class="mt-2 bg-amber-100/80 py-2.5 rounded-2xl border border-amber-300">
+              <span class="text-base font-black text-amber-950">🪙 ${first.coins} TANGA</span>
+              <span class="text-[11px] text-amber-900 block font-semibold">1-o'rin • Mavsum Peshqadami</span>
+            </div>
+          </div>
+          ${second ? `
+            <div class="podium-card podium-2 p-5 rounded-3xl text-center flex flex-col justify-between w-64 h-[270px]">
+              <div>
+                <div class="w-10 h-10 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-black mx-auto mb-2 text-sm border-2 border-white shadow-sm">
+                  2
+                </div>
+                <img src="${second.avatarUrl}" class="w-16 h-16 rounded-full mx-auto object-cover border-2 border-slate-300 shadow-sm mb-2" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80'">
+                <h4 class="font-bold text-slate-900 text-sm truncate">${second.fullName}</h4>
+                <span class="text-[11px] text-slate-500 block truncate">${second.school} • ${second.districtLabel}</span>
+              </div>
+              <div class="mt-2 bg-slate-100 py-2 rounded-2xl">
+                <span class="text-sm font-black text-slate-800">🪙 ${second.coins} Tanga</span>
+                <span class="text-[10px] text-slate-500 block">${second.eventsCount} ta tadbir</span>
+              </div>
+            </div>
+          ` : ''}
         </div>
       `;
     }
@@ -1410,8 +1469,8 @@ const App = {
     if (visitorStatCards) {
       const vStats = DataStore.getVisitorStats();
       const currentMonthKey = new Date().toISOString().slice(0, 7);
-      const currentMonthVisits = (vStats.monthly && vStats.monthly[currentMonthKey]) || 340;
-      const totalVisits = vStats.total || 2450;
+      const currentMonthVisits = (vStats.monthly && vStats.monthly[currentMonthKey]) || 0;
+      const totalVisits = vStats.total || 0;
       const creatorsCount = DataStore.getCreators().length;
 
       visitorStatCards.innerHTML = `
