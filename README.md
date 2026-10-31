@@ -1,1 +1,1 @@
-# ijodkor.uz
+# Kelajak ijodkori
