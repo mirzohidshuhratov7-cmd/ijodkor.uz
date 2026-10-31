@@ -1,5 +1,5 @@
 /**
- * IJODKOR.UZ - Asosiy Dastur Logikasi (App Controller)
+ * Kelajak ijodkori - Asosiy Dastur Logikasi (App Controller)
  */
 
 const App = {
@@ -17,6 +17,10 @@ const App = {
 
   // Dasturni ishga tushirish
   init() {
+    if (window.I18n) {
+      window.I18n.init();
+    }
+
     this.setupCloudSyncListener();
     this.setupPhotoUploadListener();
     this.setupEditPhotoUploadListener();
@@ -28,7 +32,9 @@ const App = {
     this.renderLeaderboard();
     this.renderStaffSection();
     this.renderAdminSection();
+    this.renderStaffProposals();
     this.renderStats();
+    this.renderCoordinatorPhone();
 
     // Escape bosilganda modallarni yopish
     window.addEventListener('keydown', (e) => {
@@ -37,7 +43,17 @@ const App = {
       }
     });
 
-    console.log("IJODKOR.UZ tizimi to'liq yuklandi!");
+    // Tashqi joy bosilganda til menyusini yopish
+    window.addEventListener('click', (e) => {
+      if (!e.target.closest('#lang-switcher-container') && !e.target.closest('#gateway-lang-switcher')) {
+        const m1 = document.getElementById('lang-dropdown-menu');
+        if (m1) m1.classList.add('hidden');
+        const m2 = document.getElementById('gateway-lang-dropdown-menu');
+        if (m2) m2.classList.add('hidden');
+      }
+    });
+
+    console.log("Kelajak ijodkori tizimi to'liq yuklandi!");
   },
 
   // ================= 1. BULUTLI SERVER VA STATISTIKA =================
@@ -69,7 +85,7 @@ const App = {
             <span class="w-2.5 h-2.5 rounded-full ${info.status === 'connected' ? 'bg-emerald-500' : 'bg-amber-500'}"></span>
             <span class="font-bold text-slate-900">${info.text || 'Ulangan'}</span>
           </div>
-          <span class="text-[11px] text-slate-400 block mt-0.5">Server ID: <code>${CloudSync.currentBlobId || 'Faol'}</code></span>
+          <span class="text-[11px] text-slate-400 block mt-0.5">Baza: <code>Google Firebase (Realtime)</code></span>
         `;
       }
     });
@@ -101,6 +117,10 @@ const App = {
   },
 
   refreshAllUI() {
+    if (window.I18n) {
+      window.I18n.applyTranslations();
+      window.I18n.updateLanguageUI();
+    }
     this.renderRoleUI();
     this.renderCreators();
     this.renderChallenges();
@@ -108,7 +128,22 @@ const App = {
     this.renderLeaderboard();
     this.renderStaffSection();
     this.renderAdminSection();
+    this.renderStaffProposals();
+    this.checkStaffApprovedProposals();
     this.renderStats();
+    this.renderCoordinatorPhone();
+  },
+
+  renderCoordinatorPhone() {
+    const phone = DataStore.getAdminPhone();
+    const cleanPhone = phone.replace(/\s+/g, '');
+    document.querySelectorAll('.coordinator-phone-link').forEach(el => {
+      el.textContent = phone;
+      el.setAttribute('href', 'tel:' + cleanPhone);
+    });
+    document.querySelectorAll('.coordinator-phone-text').forEach(el => {
+      el.textContent = phone;
+    });
   },
 
   // ================= 2. FOTO YUKLASH (REGISTRATSIYA & TAHRIRLASH) =================
@@ -197,8 +232,10 @@ const App = {
     const appView = document.getElementById('view-app');
     const profileBadge = document.getElementById('user-profile-badge');
     const editProfileBtn = document.getElementById('btn-edit-my-profile');
+    const staffProposalBtn = document.getElementById('btn-staff-proposal');
     const adminInboxBtn = document.getElementById('btn-admin-inbox');
     const adminNavBtn = document.getElementById('nav-btn-admin');
+    const mobileAdminNav = document.getElementById('mobile-nav-admin');
 
     if (Auth.isGuest()) {
       if (gatewayView) {
@@ -209,6 +246,8 @@ const App = {
         appView.classList.add('hidden');
         appView.classList.remove('flex');
       }
+      if (staffProposalBtn) staffProposalBtn.classList.add('hidden');
+      if (mobileAdminNav) mobileAdminNav.classList.add('hidden');
       return;
     }
 
@@ -222,11 +261,14 @@ const App = {
     }
 
     if (Auth.isAdmin()) {
-      profileBadge.innerHTML = `<i class="fa-solid fa-crown text-amber-500 text-sm"></i> <span>Bosh Koordinator (Admin)</span>`;
-      profileBadge.className = "flex items-center gap-2 px-3 py-2 rounded-2xl border border-amber-300 bg-amber-50 text-xs font-black text-amber-950";
+      const roleText = window.I18n ? I18n.t('role_admin') : 'Bosh Koordinator (Admin)';
+      profileBadge.innerHTML = `<i class="fa-solid fa-crown text-amber-500 text-xs sm:text-sm"></i> <span class="hidden sm:inline">${roleText}</span><span class="sm:hidden text-[10px]">Admin</span>`;
+      profileBadge.className = "flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border border-amber-300 bg-amber-50 text-[11px] sm:text-xs font-black text-amber-950 shrink-0";
       
       if (adminNavBtn) adminNavBtn.classList.remove('hidden');
+      if (mobileAdminNav) mobileAdminNav.classList.remove('hidden');
       if (editProfileBtn) editProfileBtn.classList.add('hidden');
+      if (staffProposalBtn) staffProposalBtn.classList.add('hidden');
       if (adminInboxBtn) {
         adminInboxBtn.classList.remove('hidden');
         adminInboxBtn.classList.add('flex');
@@ -234,22 +276,41 @@ const App = {
         document.getElementById('admin-inbox-badge').textContent = count;
       }
     } else if (Auth.isStaff()) {
-      profileBadge.innerHTML = `<i class="fa-solid fa-id-badge text-blue-500 text-sm"></i> <span>Xodim: ${user.fullName.split(' ')[0]}</span>`;
-      profileBadge.className = "flex items-center gap-2 px-3 py-2 rounded-2xl border border-blue-300 bg-blue-50 text-xs font-bold text-blue-950";
+      const staffRole = window.I18n ? I18n.t('role_staff') : 'Xodim';
+      profileBadge.innerHTML = `<i class="fa-solid fa-id-badge text-blue-500 text-xs sm:text-sm"></i> <span class="hidden sm:inline">${staffRole}: ${user.fullName.split(' ')[0]}</span><span class="sm:hidden text-[10px]">${staffRole}</span>`;
+      profileBadge.className = "flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border border-blue-300 bg-blue-50 text-[11px] sm:text-xs font-bold text-blue-950 shrink-0";
       
       if (adminNavBtn) adminNavBtn.classList.add('hidden');
-      if (editProfileBtn) editProfileBtn.classList.add('hidden');
-      if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
-    } else if (Auth.isStudent()) {
-      const creator = DataStore.getCreatorById(user.creatorId) || user;
-      profileBadge.innerHTML = `<i class="fa-solid fa-user-graduate text-emerald-600 text-sm"></i> <span>${creator.fullName.split(' ')[0]} (🪙 ${creator.coins || 10})</span>`;
-      profileBadge.className = "flex items-center gap-2 px-3 py-2 rounded-2xl border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-950";
-      
-      if (adminNavBtn) adminNavBtn.classList.add('hidden');
+      if (mobileAdminNav) mobileAdminNav.classList.add('hidden');
+      if (staffProposalBtn) {
+        staffProposalBtn.classList.remove('hidden');
+        staffProposalBtn.classList.add('inline-flex');
+      }
       if (editProfileBtn) {
         editProfileBtn.classList.remove('hidden');
         editProfileBtn.classList.add('inline-flex');
+        editProfileBtn.className = "px-2 py-1.5 sm:px-2.5 sm:py-2 bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition inline-flex items-center gap-1 shrink-0";
+        editProfileBtn.onclick = () => this.openEditStaffProfileModal();
+        editProfileBtn.title = "Xodim profilimni tahrirlash";
       }
+      if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
+    } else if (Auth.isStudent()) {
+      const creator = DataStore.getCreatorById(user.creatorId) || user;
+      profileBadge.innerHTML = `<i class="fa-solid fa-user-graduate text-emerald-600 text-xs sm:text-sm"></i> <span class="hidden sm:inline">${creator.fullName.split(' ')[0]}</span> <span>(🪙 ${creator.coins || 10})</span>`;
+      profileBadge.className = "flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border border-emerald-300 bg-emerald-50 text-[11px] sm:text-xs font-bold text-emerald-950 shrink-0";
+      
+      if (adminNavBtn) adminNavBtn.classList.add('hidden');
+      if (mobileAdminNav) mobileAdminNav.classList.add('hidden');
+      if (staffProposalBtn) staffProposalBtn.classList.add('hidden');
+      if (editProfileBtn) {
+        editProfileBtn.classList.remove('hidden');
+        editProfileBtn.classList.add('inline-flex');
+        editProfileBtn.className = "px-2 py-1.5 sm:px-2.5 sm:py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition inline-flex items-center gap-1 shrink-0";
+        editProfileBtn.onclick = () => this.openEditProfileModal();
+        editProfileBtn.title = "Profilimni tahrirlash";
+      }
+      if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
+    }
       if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
     }
   },
@@ -272,16 +333,25 @@ const App = {
 
     this.state.editTempPhotoBase64 = null;
 
-    document.getElementById('edit-fullname').value = creator.fullName;
-    document.getElementById('edit-age').value = creator.age;
-    document.getElementById('edit-district').value = creator.districtLabel;
-    document.getElementById('edit-school').value = creator.school;
-    document.getElementById('edit-video').value = creator.videoUrl;
-    document.getElementById('edit-bio').value = creator.bio;
+    document.getElementById('edit-fullname').value = creator.fullName || '';
+    if (document.getElementById('edit-nickname')) {
+      document.getElementById('edit-nickname').value = creator.nickname || '';
+    }
+    if (document.getElementById('edit-phone')) {
+      document.getElementById('edit-phone').value = creator.phone || '';
+    }
+    if (document.getElementById('edit-pin')) {
+      document.getElementById('edit-pin').value = creator.pin || '';
+    }
+    document.getElementById('edit-age').value = creator.age || 16;
+    document.getElementById('edit-district').value = creator.districtLabel || '';
+    document.getElementById('edit-school').value = creator.school || '';
+    document.getElementById('edit-video').value = creator.videoUrl || '';
+    document.getElementById('edit-bio').value = creator.bio || '';
 
     const preview = document.getElementById('edit-photo-preview');
     if (preview) {
-      preview.src = creator.avatarUrl;
+      preview.src = creator.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80';
     }
 
     this.state.targetEditCreatorId = creator.id;
@@ -308,6 +378,21 @@ const App = {
       bio: document.getElementById('edit-bio').value
     };
 
+    const nickInput = document.getElementById('edit-nickname');
+    if (nickInput && nickInput.value !== undefined) {
+      updatedData.nickname = nickInput.value.trim().replace(/^@/, '');
+    }
+
+    const phoneInput = document.getElementById('edit-phone');
+    if (phoneInput && phoneInput.value.trim()) {
+      updatedData.phone = phoneInput.value.trim();
+    }
+
+    const pinInput = document.getElementById('edit-pin');
+    if (pinInput && pinInput.value.trim()) {
+      updatedData.pin = pinInput.value.trim();
+    }
+
     if (this.state.editTempPhotoBase64) {
       updatedData.avatarUrl = this.state.editTempPhotoBase64;
     }
@@ -317,7 +402,7 @@ const App = {
       Auth.updateStudentSession(updated);
       this.closeModal('modal-edit-profile');
       this.refreshAllUI();
-      this.showToast("Profilingizdagi xatolar va video silkasi muvaffaqiyatli yangilandi!", "success");
+      this.showToast("Profilingizdagi ma'lumotlar, telefon va parol muvaffaqiyatli saqlandi!", "success");
     }
   },
 
@@ -326,6 +411,7 @@ const App = {
   switchTab(tabName) {
     this.state.currentTab = tabName;
 
+    // Desktop menyu
     document.querySelectorAll('.nav-tab').forEach(btn => {
       btn.classList.remove('active', 'bg-emerald-700', 'text-white');
       btn.classList.add('text-slate-600');
@@ -335,6 +421,18 @@ const App = {
     if (activeBtn) {
       activeBtn.classList.add('active', 'bg-emerald-700', 'text-white');
       activeBtn.classList.remove('text-slate-600');
+    }
+
+    // Mobil pastki menyu
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+      btn.classList.remove('active', 'text-emerald-700');
+      btn.classList.add('text-slate-500');
+    });
+
+    const activeMobileBtn = document.getElementById(`mobile-nav-${tabName}`);
+    if (activeMobileBtn) {
+      activeMobileBtn.classList.add('active', 'text-emerald-700');
+      activeMobileBtn.classList.remove('text-slate-500');
     }
 
     document.querySelectorAll('.tab-section').forEach(sec => {
@@ -365,6 +463,32 @@ const App = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
+  // ================= TIL ALMASHTIRISH (i18n) =================
+
+  toggleLangDropdown(context = 'app') {
+    const menuId = context === 'gateway' ? 'gateway-lang-dropdown-menu' : 'lang-dropdown-menu';
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    menu.classList.toggle('hidden');
+  },
+
+  changeLanguage(lang) {
+    if (window.I18n) {
+      window.I18n.setLanguage(lang);
+    }
+    const m1 = document.getElementById('lang-dropdown-menu');
+    if (m1) m1.classList.add('hidden');
+    const m2 = document.getElementById('gateway-lang-dropdown-menu');
+    if (m2) m2.classList.add('hidden');
+
+    const msgs = {
+      uz: "Til o'zgartirildi: O'zbekcha 🇺🇿",
+      ru: "Язык переключен: Русский 🇷🇺",
+      en: "Language changed: English 🇬🇧"
+    };
+    this.showToast(msgs[lang] || msgs.uz, "info");
+  },
+
   // ================= 5. ADMIN KIRISH VA SOZLAMALAR =================
 
   openAdminLoginModal() {
@@ -390,32 +514,59 @@ const App = {
     }
   },
 
-  openChangePinModal() {
+  openAdminSettingsModal() {
     if (!Auth.isAdmin()) return;
-    document.getElementById('current-pin-input').value = '';
-    document.getElementById('new-pin-input').value = '';
-    document.getElementById('confirm-pin-input').value = '';
+    const phoneInput = document.getElementById('admin-phone-input');
+    const nameInput = document.getElementById('admin-name-input');
+    if (phoneInput) phoneInput.value = DataStore.getAdminPhone();
+    if (nameInput) nameInput.value = DataStore.getAdminName();
+    const curr = document.getElementById('current-pin-input');
+    const next = document.getElementById('new-pin-input');
+    const conf = document.getElementById('confirm-pin-input');
+    if (curr) curr.value = '';
+    if (next) next.value = '';
+    if (conf) conf.value = '';
     this.openModal('modal-admin-change-pin');
   },
 
-  handleChangePinSubmit(e) {
+  openChangePinModal() {
+    this.openAdminSettingsModal();
+  },
+
+  handleSaveAdminSettings(e) {
     e.preventDefault();
-    const curr = document.getElementById('current-pin-input').value;
-    const next = document.getElementById('new-pin-input').value;
-    const confirmNext = document.getElementById('confirm-pin-input').value;
+    const phone = (document.getElementById('admin-phone-input').value || '').trim();
+    const name = (document.getElementById('admin-name-input').value || '').trim();
+    const curr = (document.getElementById('current-pin-input').value || '').trim();
+    const next = (document.getElementById('new-pin-input').value || '').trim();
+    const confirmNext = (document.getElementById('confirm-pin-input').value || '').trim();
 
-    if (next !== confirmNext) {
-      this.showToast("Yangi kodlar bir-biriga mos kelmadi!", "error");
-      return;
+    if (phone) {
+      DataStore.setAdminPhone(phone);
+    }
+    if (name) {
+      DataStore.setAdminName(name);
     }
 
-    const res = Auth.changeAdminPin(curr, next);
-    if (res.success) {
-      this.closeModal('modal-admin-change-pin');
-      this.showToast("Admin maxfiy kodi yangilandi!", "success");
-    } else {
-      this.showToast(res.message, "error");
+    if (next || curr || confirmNext) {
+      if (next !== confirmNext) {
+        this.showToast("Yangi admin maxfiy kodlari bir-biriga mos kelmadi!", "error");
+        return;
+      }
+      const res = Auth.changeAdminPin(curr, next);
+      if (!res.success) {
+        this.showToast(res.message, "error");
+        return;
+      }
     }
+
+    this.renderCoordinatorPhone();
+    this.closeModal('modal-admin-change-pin');
+    this.showToast("Bosh koordinator sozlamalari muvaffaqiyatli saqlandi!", "success");
+  },
+
+  handleChangePinSubmit(e) {
+    this.handleSaveAdminSettings(e);
   },
 
   openAdminInboxModal() {
@@ -462,81 +613,503 @@ const App = {
     this.renderRoleUI();
   },
 
-  // ================= 6. MADANIYAT XODIMI KIRISHI =================
+  // ================= 6. MADANIYAT XODIMI PROFILI: KIRISH, REGISTRATSIYA VA PAROL TIKLASH =================
 
-  openStaffAuthModal() {
-    this.resetStaffAuthStep();
+  openStaffAuthModal(initialTab = 'login') {
     this.openModal('modal-staff-auth');
+    this.switchStaffAuthTab(initialTab);
   },
 
-  resetStaffAuthStep() {
-    document.getElementById('staff-auth-step1').classList.remove('hidden');
-    document.getElementById('staff-auth-step2').classList.add('hidden');
-    const input = document.getElementById('staff-verify-code-input');
-    if (input) input.value = '';
-    this.state.staffTempAuth = null;
+  switchStaffAuthTab(tab) {
+    const loginTabBtn = document.getElementById('tab-btn-staff-login');
+    const registerTabBtn = document.getElementById('tab-btn-staff-register');
+    const panelLogin = document.getElementById('staff-panel-login');
+    const panelRegister = document.getElementById('staff-panel-register');
+    const panelForgot = document.getElementById('staff-panel-forgot');
+    const modalTitle = document.getElementById('staff-modal-title');
+    const modalSubtitle = document.getElementById('staff-modal-subtitle');
+    const tabsContainer = document.getElementById('staff-auth-tabs');
+
+    if (tab === 'login') {
+      if (tabsContainer) tabsContainer.classList.remove('hidden');
+      if (loginTabBtn) {
+        loginTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm";
+      }
+      if (registerTabBtn) {
+        registerTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+      }
+      if (panelLogin) panelLogin.classList.remove('hidden');
+      if (panelRegister) panelRegister.classList.add('hidden');
+      if (panelForgot) panelForgot.classList.add('hidden');
+      if (modalTitle) modalTitle.innerText = "Madaniyat Xodimi Kirishi";
+      if (modalSubtitle) modalSubtitle.innerText = "Kelajak ijodkori portali";
+    } else if (tab === 'register') {
+      if (tabsContainer) tabsContainer.classList.remove('hidden');
+      if (registerTabBtn) {
+        registerTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm";
+      }
+      if (loginTabBtn) {
+        loginTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+      }
+      if (panelLogin) panelLogin.classList.add('hidden');
+      if (panelRegister) panelRegister.classList.remove('hidden');
+      if (panelForgot) panelForgot.classList.add('hidden');
+      if (modalTitle) modalTitle.innerText = "Yangi Xodim Profili Ochish";
+      if (modalSubtitle) modalSubtitle.innerText = "Ma'lumotlaringizni to'ldiring";
+    } else if (tab === 'forgot') {
+      if (tabsContainer) tabsContainer.classList.add('hidden');
+      if (panelLogin) panelLogin.classList.add('hidden');
+      if (panelRegister) panelRegister.classList.add('hidden');
+      if (panelForgot) panelForgot.classList.remove('hidden');
+      if (modalTitle) modalTitle.innerText = "Xodim Kodini Tiklash";
+      if (modalSubtitle) modalSubtitle.innerText = "Telefoningizga SMS tasdiq kodi yuboriladi";
+
+      const step1 = document.getElementById('staff-forgot-step1');
+      const step2 = document.getElementById('staff-forgot-step2');
+      if (step1) step1.classList.remove('hidden');
+      if (step2) step2.classList.add('hidden');
+      const codeInput = document.getElementById('staff-forgot-code');
+      const newPinInput = document.getElementById('staff-forgot-new-pin');
+      if (codeInput) codeInput.value = '';
+      if (newPinInput) newPinInput.value = '';
+      this.state.staffForgotSession = null;
+    }
   },
 
-  handleStaffRequestCode(e) {
-    e.preventDefault();
+  handleStaffLogin(e) {
+    if (e) e.preventDefault();
+    const idInput = document.getElementById('staff-login-identifier');
+    const pinInput = document.getElementById('staff-login-pin');
+    const identifier = idInput ? idInput.value.trim() : '';
+    const pin = pinInput ? pinInput.value.trim() : '';
+
+    if (!identifier) {
+      this.showToast("Iltimos, ismingiz yoki telefon raqamingizni kiriting!", "warning");
+      return;
+    }
+    if (!pin) {
+      this.showToast("Iltimos, profil maxfiy kodingizni (parol) kiriting!", "warning");
+      return;
+    }
+
+    const res = Auth.loginStaffByCredentials(identifier, pin);
+    if (res.success) {
+      this.closeModal('modal-staff-auth');
+      this.refreshAllUI();
+      this.switchTab('creators');
+      this.showToast(`Xush kelibsiz, ${res.staff.fullName}! Xodim profilingizga muvaffaqiyatli kirdingiz.`, "success");
+    } else {
+      this.showToast(res.message, "error");
+    }
+  },
+
+  handleStaffRegister(e) {
+    if (e) e.preventDefault();
+    const fullName = (document.getElementById('staff-fullname').value || '').trim();
+    const position = (document.getElementById('staff-position').value || '').trim();
+    const org = (document.getElementById('staff-org').value || '').trim();
+    const phone = (document.getElementById('staff-phone').value || '').trim();
+    const pin = (document.getElementById('staff-pin').value || '').trim();
+
+    if (!fullName || !phone) {
+      this.showToast("Ismingiz va telefon raqamingizni to'liq kiriting!", "warning");
+      return;
+    }
+    if (!pin || pin.length < 4) {
+      this.showToast("Profil kodi kamida 4 ta belgidan iborat bo'lishi kerak!", "warning");
+      return;
+    }
+
     const staffData = {
-      fullName: document.getElementById('staff-fullname').value,
-      organization: document.getElementById('staff-org').value,
-      position: document.getElementById('staff-position').value,
-      phone: document.getElementById('staff-phone').value
+      fullName: fullName,
+      position: position || 'Madaniyat Xodimi',
+      organization: org || 'Madaniyat Boshqarmasi',
+      phone: phone,
+      pin: pin
     };
 
-    const generatedCode = String(Math.floor(1000 + Math.random() * 9000));
-    this.state.staffTempAuth = {
-      code: generatedCode,
-      data: staffData
-    };
+    const res = Auth.loginStaff(staffData);
 
     DataStore.sendToAdminInbox({
       type: 'staff',
       name: staffData.fullName,
       phone: staffData.phone,
-      position: staffData.position,
-      organization: staffData.organization,
-      code: generatedCode
+      position: `${staffData.position} (${staffData.organization})`,
+      code: 'Yangi Xodim'
     });
 
-    document.getElementById('staff-auth-step1').classList.add('hidden');
-    document.getElementById('staff-auth-step2').classList.remove('hidden');
-
-    this.showToast("Tasdiqlash kodi Bosh Koordinatorning shaxsiy profiliga yuborildi!", "info");
+    this.closeModal('modal-staff-auth');
+    this.refreshAllUI();
+    this.switchTab('creators');
+    this.showToast(`Xush kelibsiz, ${staffData.fullName}! Xodim profilingiz yaratildi.`, "success");
   },
 
-  handleStaffVerifyCode() {
-    const entered = (document.getElementById('staff-verify-code-input').value || '').trim();
-    if (!this.state.staffTempAuth) return;
+  handleStaffForgotSendSms(e) {
+    if (e) e.preventDefault();
+    const phoneInput = (document.getElementById('staff-forgot-phone').value || '').trim();
+    if (!phoneInput) {
+      this.showToast("Iltimos, ro'yxatdan o'tgan telefon raqamingizni kiriting!", "warning");
+      return;
+    }
 
-    if (entered === this.state.staffTempAuth.code) {
-      const res = Auth.loginStaff(this.state.staffTempAuth.data);
+    const staff = DataStore.findStaffByPhone(phoneInput);
+    if (!staff) {
+      this.showToast("Ushbu telefon raqami bilan ro'yxatdan o'tgan xodim topilmadi! Raqamni to'g'ri kiritganingizni tekshiring.", "error");
+      return;
+    }
+
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    this.state.staffForgotSession = {
+      phone: staff.phone,
+      staffId: staff.id,
+      code: code
+    };
+
+    DataStore.sendToAdminInbox({
+      type: 'staff_reset',
+      name: staff.fullName,
+      phone: staff.phone,
+      position: 'Xodim parolini tiklash SMS',
+      code: code
+    });
+
+    const hint = document.getElementById('staff-forgot-sms-hint');
+    if (hint) {
+      hint.innerHTML = `<strong>${staff.phone}</strong> raqamiga 4 talik tasdiqlash kodi yuborildi:<br><span class="inline-block mt-1 px-3 py-1 bg-white border border-blue-300 rounded-lg text-blue-950 font-black tracking-widest text-base shadow-sm">${code}</span>`;
+    }
+
+    const step1 = document.getElementById('staff-forgot-step1');
+    const step2 = document.getElementById('staff-forgot-step2');
+    if (step1) step1.classList.add('hidden');
+    if (step2) step2.classList.remove('hidden');
+
+    this.showToast(`Tasdiqlash kodi: ${code}`, "info");
+  },
+
+  handleStaffForgotVerifyAndReset(e) {
+    if (e) e.preventDefault();
+    if (!this.state.staffForgotSession) {
+      this.showToast("Tiklash sessiyasi topilmadi. Qaytadan urinib ko'ring.", "error");
+      this.switchStaffAuthTab('forgot');
+      return;
+    }
+
+    const enteredCode = (document.getElementById('staff-forgot-code').value || '').trim();
+    const newPin = (document.getElementById('staff-forgot-new-pin').value || '').trim();
+
+    if (enteredCode !== this.state.staffForgotSession.code) {
+      this.showToast("Kiritilgan 4 talik tasdiqlash kodi noto'g'ri!", "error");
+      return;
+    }
+
+    if (!newPin || newPin.length < 4) {
+      this.showToast("Yangi profil kodi kamida 4 ta belgidan iborat bo'lishi kerak!", "warning");
+      return;
+    }
+
+    const res = DataStore.resetStaffPin(this.state.staffForgotSession.phone, newPin);
+    if (res.success && res.staff) {
+      Auth.loginStaff(res.staff);
+      this.state.staffForgotSession = null;
       this.closeModal('modal-staff-auth');
       this.refreshAllUI();
-      this.switchTab('staff');
-      this.showToast(`Xush kelibsiz, Madaniyat xodimi: ${res.user.fullName}!`, "success");
+      this.switchTab('creators');
+      this.showToast(`✅ Xodim kodingiz yangilandi va profilingizga kirdingiz!`, "success");
     } else {
-      this.showToast("Kiritilgan ID-kod noto'g'ri!", "error");
+      this.showToast(res.message || "Xatolik yuz berdi!", "error");
     }
   },
 
-  // ================= 7. O'QUVCHI REGISTRATSIYASI =================
+  resetStaffAuthStep() {
+    this.switchStaffAuthTab('login');
+    const input = document.getElementById('staff-login-identifier');
+    if (input) input.value = '';
+    const pinInput = document.getElementById('staff-login-pin');
+    if (pinInput) pinInput.value = '';
+    this.state.staffForgotSession = null;
+  },
 
-  openStudentAuthModal() {
-    this.resetStudentAuthStep();
+  openEditStaffProfileModal() {
+    const user = Auth.getCurrentUser();
+    if (!user || user.role !== 'staff') return;
+
+    const staffList = DataStore.getStaffList();
+    const staff = staffList.find(s => s.id === user.staffId || s.phone === user.phone) || user;
+
+    document.getElementById('edit-staff-fullname').value = staff.fullName || '';
+    document.getElementById('edit-staff-position').value = staff.position || '';
+    document.getElementById('edit-staff-org').value = staff.organization || '';
+    document.getElementById('edit-staff-phone').value = staff.phone || '';
+    const pinInput = document.getElementById('edit-staff-pin');
+    if (pinInput) pinInput.value = staff.pin || '';
+
+    this.state.targetEditStaffId = staff.id;
+    this.openModal('modal-edit-staff-profile');
+  },
+
+  handleEditStaffSubmit(e) {
+    e.preventDefault();
+    const user = Auth.getCurrentUser();
+    const staffId = this.state.targetEditStaffId || (user.staffId || user.id);
+    if (!staffId) return;
+
+    const fullName = (document.getElementById('edit-staff-fullname').value || '').trim();
+    const position = (document.getElementById('edit-staff-position').value || '').trim();
+    const organization = (document.getElementById('edit-staff-org').value || '').trim();
+    const phone = (document.getElementById('edit-staff-phone').value || '').trim();
+    const pin = (document.getElementById('edit-staff-pin').value || '').trim();
+
+    const updatedData = {
+      fullName: fullName,
+      position: position,
+      organization: organization,
+      phone: phone
+    };
+    if (pin && pin.length >= 4) {
+      updatedData.pin = pin;
+    }
+
+    const updated = DataStore.updateStaffMember(staffId, updatedData);
+    if (updated) {
+      Auth.updateStaffSession(updated);
+      this.closeModal('modal-edit-staff-profile');
+      this.refreshAllUI();
+      this.showToast("Xodim profilingiz ma'lumotlari muvaffaqiyatli saqlandi!", "success");
+    }
+  },
+
+  // ================= 7. O'QUVCHI PROFILI: KIRISH, REGISTRATSIYA VA PAROL TIKLASH =================
+
+  openStudentAuthModal(initialTab = 'login') {
     this.openModal('modal-student-auth');
+    this.switchStudentAuthTab(initialTab);
+  },
+
+  switchStudentAuthTab(tab) {
+    const loginTabBtn = document.getElementById('tab-btn-student-login');
+    const registerTabBtn = document.getElementById('tab-btn-student-register');
+    const panelLogin = document.getElementById('student-panel-login');
+    const panelRegister = document.getElementById('student-panel-register');
+    const panelForgot = document.getElementById('student-panel-forgot');
+    const modalTitle = document.getElementById('student-modal-title');
+    const modalSubtitle = document.getElementById('student-modal-subtitle');
+    const tabsContainer = document.getElementById('student-auth-tabs');
+
+    if (tab === 'login') {
+      if (tabsContainer) tabsContainer.classList.remove('hidden');
+      if (loginTabBtn) {
+        loginTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm";
+      }
+      if (registerTabBtn) {
+        registerTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+      }
+      if (panelLogin) panelLogin.classList.remove('hidden');
+      if (panelRegister) panelRegister.classList.add('hidden');
+      if (panelForgot) panelForgot.classList.add('hidden');
+      if (modalTitle) modalTitle.innerText = "Profilga Kirish";
+      if (modalSubtitle) modalSubtitle.innerText = "Kelajak ijodkori portali";
+    } else if (tab === 'register') {
+      if (tabsContainer) tabsContainer.classList.remove('hidden');
+      if (registerTabBtn) {
+        registerTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm";
+      }
+      if (loginTabBtn) {
+        loginTabBtn.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+      }
+      if (panelLogin) panelLogin.classList.add('hidden');
+      if (panelRegister) panelRegister.classList.remove('hidden');
+      if (panelForgot) panelForgot.classList.add('hidden');
+      if (modalTitle) modalTitle.innerText = "Yangi Profil Ochish";
+      if (modalSubtitle) modalSubtitle.innerText = "Ma'lumotlaringizni to'ldiring va +10 tanga oling";
+    } else if (tab === 'forgot') {
+      if (tabsContainer) tabsContainer.classList.add('hidden');
+      if (panelLogin) panelLogin.classList.add('hidden');
+      if (panelRegister) panelRegister.classList.add('hidden');
+      if (panelForgot) panelForgot.classList.remove('hidden');
+      if (modalTitle) modalTitle.innerText = "Profil Kodini Tiklash";
+      if (modalSubtitle) modalSubtitle.innerText = "Telefon raqamingizga SMS kod yuboriladi";
+
+      // Reset forgot step
+      const step1 = document.getElementById('student-forgot-step1');
+      const step2 = document.getElementById('student-forgot-step2');
+      if (step1) step1.classList.remove('hidden');
+      if (step2) step2.classList.add('hidden');
+      const codeInput = document.getElementById('std-forgot-code');
+      const newPinInput = document.getElementById('std-forgot-new-pin');
+      if (codeInput) codeInput.value = '';
+      if (newPinInput) newPinInput.value = '';
+      this.state.studentForgotSession = null;
+    }
+  },
+
+  handleStudentLogin(e) {
+    if (e) e.preventDefault();
+    const idInput = document.getElementById('std-login-identifier');
+    const pinInput = document.getElementById('std-login-pin');
+    const identifier = idInput ? idInput.value.trim() : '';
+    const pin = pinInput ? pinInput.value.trim() : '';
+
+    if (!identifier) {
+      this.showToast("Iltimos, ismingiz, nikingiz yoki telefon raqamingizni kiriting!", "warning");
+      return;
+    }
+    if (!pin) {
+      this.showToast("Iltimos, profil maxfiy kodingizni (parol) kiriting!", "warning");
+      return;
+    }
+
+    const res = Auth.loginStudentByCredentials(identifier, pin);
+    if (res.success) {
+      this.closeModal('modal-student-auth');
+      this.refreshAllUI();
+      this.switchTab('creators');
+      this.showToast(`Xush kelibsiz, ${res.creator.fullName}! Profilingizga muvaffaqiyatli kirdingiz.`, "success");
+    } else {
+      this.showToast(res.message, "error");
+    }
+  },
+
+  handleStudentRegister(e) {
+    if (e) e.preventDefault();
+
+    const fullName = (document.getElementById('std-fullname').value || "Yosh Iqtidor").trim();
+    let nick = (document.getElementById('std-nickname').value || '').trim().replace(/^@/, '');
+    if (!nick) {
+      nick = fullName.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'ijodkor';
+    }
+
+    const pin = (document.getElementById('std-pin').value || '').trim();
+    if (!pin || pin.length < 4) {
+      this.showToast("Profil maxfiy kodi kamida 4 ta raqam yoki belgidan iborat bo'lishi kerak!", "warning");
+      return;
+    }
+
+    const phoneInput = (document.getElementById('std-phone').value || '').trim();
+    if (!phoneInput) {
+      this.showToast("Iltimos, telefon raqamingizni kiriting!", "warning");
+      return;
+    }
+
+    const districtVal = document.getElementById('std-district').value;
+    const districtObj = TUMANLAR.find(t => t.name.toLowerCase() === districtVal.toLowerCase() || t.id === districtVal.toLowerCase());
+    const finalDistrictId = districtObj ? districtObj.id : (districtVal ? districtVal.toLowerCase().replace(/\s+/g, '-') : 'chilonzor');
+    const finalDistrictLabel = districtObj ? districtObj.name : (districtVal || 'Toshkent shahri');
+
+    const defaultAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80';
+    const userPhoto = this.state.studentTempPhotoBase64 || defaultAvatar;
+
+    const studentData = {
+      fullName: fullName,
+      nickname: nick,
+      pin: pin,
+      age: document.getElementById('std-age').value || "16",
+      district: finalDistrictId,
+      districtLabel: finalDistrictLabel,
+      school: (document.getElementById('std-school').value || "15-umumiy o'rta ta'lim maktabi").trim(),
+      videoUrl: (document.getElementById('std-video').value || '').trim(),
+      bio: (document.getElementById('std-bio').value || '').trim(),
+      phone: phoneInput,
+      avatarUrl: userPhoto,
+      initialCoins: 10
+    };
+
+    // Yangi o'quvchini darhol bazaga qo'shish va Firebase'ga uzatish
+    const newCreator = DataStore.addCreator(studentData);
+    Auth.loginStudent(newCreator);
+
+    DataStore.sendToAdminInbox({
+      type: 'student',
+      name: newCreator.fullName,
+      phone: newCreator.phone,
+      position: `${newCreator.school} (@${newCreator.nickname})`,
+      code: 'Yangi Profil'
+    });
+
+    this.closeModal('modal-student-auth');
+    this.refreshAllUI();
+    this.switchTab('creators');
+
+    this.showToast(`🎉 Tabriklaymiz, ${newCreator.fullName}! Profilingiz yaratildi va +10 tanga berildi!`, "success");
+  },
+
+  handleStudentForgotSendSms(e) {
+    if (e) e.preventDefault();
+    const phoneInput = (document.getElementById('std-forgot-phone').value || '').trim();
+    if (!phoneInput) {
+      this.showToast("Iltimos, ro'yxatdan o'tgan telefon raqamingizni kiriting!", "warning");
+      return;
+    }
+
+    const creator = DataStore.findCreatorByPhone(phoneInput);
+    if (!creator) {
+      this.showToast("Ushbu telefon raqami bilan ro'yxatdan o'tgan o'quvchi topilmadi! Raqamni to'g'ri kiritganingizni tekshiring.", "error");
+      return;
+    }
+
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    this.state.studentForgotSession = {
+      phone: creator.phone,
+      creatorId: creator.id,
+      code: code
+    };
+
+    DataStore.sendToAdminInbox({
+      type: 'student_reset',
+      name: creator.fullName,
+      phone: creator.phone,
+      position: `Parolni tiklash SMS (@${creator.nickname || 'ijodkor'})`,
+      code: code
+    });
+
+    const hint = document.getElementById('student-forgot-sms-hint');
+    if (hint) {
+      hint.innerHTML = `<strong>${creator.phone}</strong> raqamiga 4 talik tasdiqlash kodi yuborildi:<br><span class="inline-block mt-1 px-3 py-1 bg-white border border-emerald-300 rounded-lg text-emerald-950 font-black tracking-widest text-base shadow-sm">${code}</span>`;
+    }
+
+    const step1 = document.getElementById('student-forgot-step1');
+    const step2 = document.getElementById('student-forgot-step2');
+    if (step1) step1.classList.add('hidden');
+    if (step2) step2.classList.remove('hidden');
+
+    this.showToast(`Tasdiqlash kodi: ${code}`, "info");
+  },
+
+  handleStudentForgotVerifyAndReset(e) {
+    if (e) e.preventDefault();
+    if (!this.state.studentForgotSession) {
+      this.showToast("Tiklash sessiyasi topilmadi. Qaytadan urinib ko'ring.", "error");
+      this.switchStudentAuthTab('forgot');
+      return;
+    }
+
+    const enteredCode = (document.getElementById('std-forgot-code').value || '').trim();
+    const newPin = (document.getElementById('std-forgot-new-pin').value || '').trim();
+
+    if (enteredCode !== this.state.studentForgotSession.code) {
+      this.showToast("Kiritilgan 4 talik tasdiqlash kodi noto'g'ri!", "error");
+      return;
+    }
+
+    if (!newPin || newPin.length < 4) {
+      this.showToast("Yangi profil kodi kamida 4 ta belgidan iborat bo'lishi kerak!", "warning");
+      return;
+    }
+
+    const res = DataStore.resetStudentPin(this.state.studentForgotSession.phone, newPin);
+    if (res.success && res.creator) {
+      Auth.loginStudent(res.creator);
+      this.state.studentForgotSession = null;
+      this.closeModal('modal-student-auth');
+      this.refreshAllUI();
+      this.switchTab('creators');
+      this.showToast(`✅ Profil kodingiz yangilandi va profilingizga kirdingiz!`, "success");
+    } else {
+      this.showToast(res.message || "Xatolik yuz berdi!", "error");
+    }
   },
 
   resetStudentAuthStep() {
-    document.getElementById('student-auth-step1').classList.remove('hidden');
-    document.getElementById('student-auth-step2').classList.add('hidden');
-    const input = document.getElementById('student-verify-code-input');
-    if (input) input.value = '';
-    this.state.studentTempAuth = null;
-    this.state.studentTempPhotoBase64 = null;
-
+    this.switchStudentAuthTab('login');
     const previewImg = document.getElementById('photo-preview-img');
     const placeholder = document.getElementById('photo-preview-placeholder');
     if (previewImg) {
@@ -548,81 +1121,7 @@ const App = {
     }
     const photoInput = document.getElementById('std-photo-input');
     if (photoInput) photoInput.value = '';
-  },
-
-  handleStudentRequestSms(e) {
-    e.preventDefault();
-    const phoneInput = document.getElementById('std-phone').value;
-
-    if (DataStore.isPhoneRegistered(phoneInput)) {
-      this.showToast("Ushbu telefon raqam bilan avval profil ochilgan! Bitta raqamga faqat bitta profil yaratish mumkin.", "error");
-      return;
-    }
-
-    if (!this.state.studentTempPhotoBase64) {
-      this.showToast("Iltimos, o'zingizning rasmingizni yuklang (Galereya yoki kameradan)!", "error");
-      return;
-    }
-
-    const districtVal = document.getElementById('std-district').value;
-    const districtObj = TUMANLAR.find(t => t.name.toLowerCase() === districtVal.toLowerCase() || t.id === districtVal.toLowerCase());
-    const finalDistrictId = districtObj ? districtObj.id : districtVal.toLowerCase().replace(/\s+/g, '-');
-    const finalDistrictLabel = districtObj ? districtObj.name : districtVal;
-
-    const studentData = {
-      fullName: document.getElementById('std-fullname').value,
-      age: document.getElementById('std-age').value,
-      district: finalDistrictId,
-      districtLabel: finalDistrictLabel,
-      school: document.getElementById('std-school').value,
-      videoUrl: document.getElementById('std-video').value,
-      bio: document.getElementById('std-bio').value,
-      phone: phoneInput,
-      avatarUrl: this.state.studentTempPhotoBase64,
-      initialCoins: 10
-    };
-
-    const generatedSms = String(Math.floor(1000 + Math.random() * 9000));
-    this.state.studentTempAuth = {
-      code: generatedSms,
-      data: studentData
-    };
-
-    DataStore.sendToAdminInbox({
-      type: 'student',
-      name: studentData.fullName,
-      phone: studentData.phone,
-      position: `${studentData.school} (${studentData.districtLabel})`,
-      code: generatedSms
-    });
-
-    document.getElementById('student-auth-step1').classList.add('hidden');
-    document.getElementById('student-auth-step2').classList.remove('hidden');
-
-    const hint = document.getElementById('student-sms-hint-text');
-    if (hint) {
-      hint.textContent = `${studentData.phone} raqamiga tasdiqlash kodi yuborildi (Sinov kodi: ${generatedSms})`;
-    }
-
-    this.showToast(`Tasdiqlash kodi Adminga va raqamingizga yuborildi: [${generatedSms}]`, "info");
-  },
-
-  handleStudentVerifyCode() {
-    const entered = (document.getElementById('student-verify-code-input').value || '').trim();
-    if (!this.state.studentTempAuth) return;
-
-    if (entered === this.state.studentTempAuth.code) {
-      const newCreator = DataStore.addCreator(this.state.studentTempAuth.data);
-      Auth.loginStudent(newCreator);
-
-      this.closeModal('modal-student-auth');
-      this.refreshAllUI();
-      this.switchTab('creators');
-
-      this.showToast(`Tabriklaymiz, ${newCreator.fullName}! Profilingiz yaratildi va +10 tanga berildi!`, "success");
-    } else {
-      this.showToast("Kiritilgan tasdiq kodi noto'g'ri!", "error");
-    }
+    this.state.studentTempPhotoBase64 = null;
   },
 
   // ================= 8. CHELLENJLAR (VIDEO VAZIFALAR & DEDLAYN) =================
@@ -672,11 +1171,36 @@ const App = {
             <i class="fa-solid fa-clock"></i> ${daysLeft} kun qoldi (${chl.deadline} gacha)
           </span>
         `;
-        submitButton = `
-          <button onclick="App.openSubmitChallengeModal('${chl.id}')" class="w-full py-3 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Video Rolikni Topshirish
-          </button>
-        `;
+
+        if (Auth.isStudent()) {
+          // FAQAT MAKTAB O'QUVCHISI UCHUN VIDEO TOPSHIRISH TUGMASI KO'RINADI
+          submitButton = `
+            <button onclick="App.openSubmitChallengeModal('${chl.id}')" class="w-full py-3 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-black rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Video Rolikni Topshirish
+            </button>
+          `;
+        } else if (isAdmin) {
+          // ADMIN UCHUN NAZORAT MA'LUMOTI
+          submitButton = `
+            <div class="p-3 bg-slate-100 border border-slate-200 rounded-2xl text-center text-xs font-bold text-slate-600 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-user-graduate text-emerald-600"></i> O'quvchilar ushbu chellenjga video topshirishadi
+            </div>
+          `;
+        } else if (Auth.isStaff()) {
+          // MADANIYAT XODIMI UCHUN MA'LUMOT
+          submitButton = `
+            <div class="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-center text-xs font-bold text-blue-700 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-film text-blue-600"></i> Umumiy maktab o'quvchilari uchun ijodiy topshiriq
+            </div>
+          `;
+        } else {
+          // MEHMON REJIMIDA O'QUVCHI SIFATIDA KIRISH CHAQRIG'I
+          submitButton = `
+            <button onclick="App.openStudentAuthModal('login')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-user-graduate text-emerald-600"></i> Topshirish uchun o'quvchi profiliga kiring
+            </button>
+          `;
+        }
       }
 
       return `
@@ -751,7 +1275,9 @@ const App = {
               <a href="${sub.videoUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5">
                 <i class="fa-solid fa-play text-red-400 text-[10px]"></i> Videoni Ko'rish
               </a>
-              <span class="text-[10px] text-slate-400">${sub.submittedAt}</span>
+              <span class="text-[11px] text-slate-500 font-bold inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs" title="Video rolik yuklangan sana">
+                <i class="fa-regular fa-calendar-check text-emerald-600"></i> ${sub.submittedAt}
+              </span>
             </div>
           </div>
         `).join('');
@@ -760,6 +1286,12 @@ const App = {
   },
 
   openSubmitChallengeModal(challengeId) {
+    if (!Auth.isStudent()) {
+      this.showToast("Video rolik topshirish faqat maktab o'quvchilari uchun! Iltimos, o'quvchi sifatida kiring.", "warning");
+      this.openStudentAuthModal('login');
+      return;
+    }
+
     const chl = DataStore.getChallenges().find(c => c.id === challengeId);
     if (!chl) return;
 
@@ -1019,11 +1551,14 @@ const App = {
     }
 
     if (selectFilter) {
-      selectFilter.innerHTML = TUMANLAR.map(t => `
-        <option value="${t.id}" ${this.state.selectedDistrict === t.id ? 'selected' : ''}>
-          ${t.icon} ${t.name}
-        </option>
-      `).join('');
+      selectFilter.innerHTML = TUMANLAR.map(t => {
+        const name = (t.id === 'all' && window.I18n) ? I18n.t('all_districts') : t.name;
+        return `
+          <option value="${t.id}" ${this.state.selectedDistrict === t.id ? 'selected' : ''}>
+            ${t.icon} ${name}
+          </option>
+        `;
+      }).join('');
     }
 
     if (!container) return;
@@ -1035,11 +1570,12 @@ const App = {
       const activeClass = isActive 
         ? 'bg-emerald-700 text-white shadow-sm' 
         : 'bg-slate-100 hover:bg-slate-200 text-slate-700';
+      const name = (t.id === 'all' && window.I18n) ? I18n.t('all_districts') : t.name;
 
       return `
         <button onclick="App.setDistrict('${t.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${activeClass}">
           <span>${t.icon}</span>
-          <span>${t.name}</span>
+          <span>${name}</span>
         </button>
       `;
     }).join('');
@@ -1386,6 +1922,9 @@ const App = {
     const isStaffOrAdmin = Auth.isStaff();
 
     if (!isStaffOrAdmin) {
+      const proposalsCard = document.getElementById('staff-my-proposals-card');
+      if (proposalsCard) proposalsCard.classList.add('hidden');
+
       authStatus.innerHTML = `
         <span class="text-xs text-blue-200 block mb-1">Xodim tasdig'i talab qilinadi</span>
         <button onclick="App.openStaffAuthModal()" class="px-4 py-2 bg-white text-blue-950 rounded-xl font-black text-xs shadow hover:bg-blue-50 transition">
@@ -1404,6 +1943,9 @@ const App = {
       `;
       return;
     }
+
+    const proposalsCard = document.getElementById('staff-my-proposals-card');
+    if (proposalsCard) proposalsCard.classList.remove('hidden');
 
     authStatus.innerHTML = `
       <span class="text-xs text-emerald-300 font-bold block mb-1">
@@ -1454,6 +1996,66 @@ const App = {
         </table>
       </div>
     `;
+
+    const myProposalsContainer = document.getElementById('staff-my-proposals-container');
+    if (myProposalsContainer) {
+      const allProposals = DataStore.getStaffProposals();
+      const myProposals = allProposals.filter(p => p.staffId === user.staffId || p.staffId === user.id || p.staffPhone === user.phone);
+
+      if (myProposals.length === 0) {
+        myProposalsContainer.innerHTML = `
+          <div class="p-6 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-500 text-xs">
+            <i class="fa-solid fa-lightbulb text-slate-400 text-2xl mb-1.5 block"></i>
+            Hozircha siz tomoningizdan taklif yuborilmagan. Yuqoridagi "Yangi Taklif Yuborish" tugmasi orqali Bosh Koordinatorga yangi tadbirlar yoki iqtidorli o'quvchilarni tavsiya etishingiz mumkin!
+          </div>
+        `;
+      } else {
+        myProposalsContainer.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${myProposals.map(p => {
+              const isApproved = p.status === 'approved';
+              return `
+                <div class="p-4 rounded-2xl border ${isApproved ? 'bg-gradient-to-br from-emerald-50 to-teal-50/70 border-emerald-300 shadow-sm' : 'bg-amber-50/70 border-amber-200'} space-y-2.5">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    ${isApproved ? `
+                      <span class="px-2.5 py-1 rounded-xl text-xs font-black bg-emerald-600 text-white flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-circle-check text-white"></i> Tabriklaymiz, taklifingiz ma'qullandi!
+                      </span>
+                    ` : `
+                      <span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 flex items-center gap-1.5 border border-amber-200">
+                        <i class="fa-solid fa-hourglass-half text-amber-600"></i> Taklif uchun rahmat, admin siz bilan bog'lanadi
+                      </span>
+                    `}
+                    <span class="text-[11px] text-slate-500 font-medium">
+                      <i class="fa-regular fa-clock mr-1 text-slate-400"></i>${p.createdAt}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 class="font-black text-slate-900 text-sm leading-snug">${p.title}</h4>
+                    <p class="text-xs text-slate-600 mt-1 leading-relaxed">${p.description}</p>
+                  </div>
+
+                  ${p.targetStudentName ? `
+                    <div class="text-[11px] text-amber-900 bg-amber-100/80 px-2.5 py-1 rounded-xl font-bold flex items-center gap-1.5 border border-amber-200">
+                      <i class="fa-solid fa-star text-amber-600"></i> Tavsiya etilgan: ${p.targetStudentName} (${p.targetStudentSchool || ''})
+                    </div>
+                  ` : ''}
+
+                  ${p.adminNote ? `
+                    <div class="text-xs text-emerald-950 bg-white/95 p-2.5 rounded-xl border border-emerald-200 font-semibold shadow-2xs">
+                      <i class="fa-solid fa-crown text-amber-500 mr-1"></i> <strong>Admin izohi:</strong> ${p.adminNote}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+    }
+
+    this.checkStaffApprovedProposals();
   },
 
   // ================= 14. ADMIN BOSHQARUVI, STATISTIKA & CHELLENJ BAHOLASH =================
@@ -1527,6 +2129,9 @@ const App = {
               <div>
                 <span>${sub.creatorName}</span>
                 <span class="block text-[11px] text-slate-400 font-normal">${sub.creatorSchool}</span>
+                <span class="inline-flex items-center gap-1 text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md mt-1 font-bold border border-emerald-200" title="Yuklangan sana">
+                  <i class="fa-regular fa-calendar-check text-[10px] text-emerald-600"></i> Sana: ${sub.submittedAt || 'Yangi'}
+                </span>
               </div>
             </td>
             <td class="px-5 py-3 text-xs font-medium text-rose-700">${sub.challengeTitle}</td>
@@ -1634,6 +2239,8 @@ const App = {
         </tr>
       `).join('');
     }
+
+    this.renderStaffProposals();
   },
 
   renderStats() {
@@ -1652,6 +2259,322 @@ const App = {
     });
 
     if (totalCoinsEl) totalCoinsEl.textContent = totalCoins.toLocaleString();
+  },
+
+  // ================= MADANIYAT XODIMLARI TAKLIF VA TASHABBUSLARI =================
+
+  openStaffProposalModal() {
+    if (!Auth.isStaff()) {
+      this.showToast("Taklif yuborish uchun Madaniyat xodimi sifatida kiring!", "warning");
+      this.openStaffAuthModal('login');
+      return;
+    }
+
+    const form = document.getElementById('proposal-form');
+    const successBox = document.getElementById('proposal-success-box');
+    if (form) form.classList.remove('hidden');
+    if (successBox) successBox.classList.add('hidden');
+
+    const catSelect = document.getElementById('proposal-category');
+    if (catSelect) catSelect.value = 'event';
+
+    const titleInput = document.getElementById('proposal-title');
+    if (titleInput) titleInput.value = '';
+
+    const descInput = document.getElementById('proposal-desc');
+    if (descInput) descInput.value = '';
+
+    // Populate students dropdown for nomination
+    const studentSelect = document.getElementById('proposal-student-select');
+    if (studentSelect) {
+      const creators = DataStore.getCreators();
+      studentSelect.innerHTML = creators.map(c => `
+        <option value="${c.id}">${c.fullName} (${c.districtLabel}, ${c.school})</option>
+      `).join('');
+    }
+
+    this.handleProposalCategoryChange();
+    this.openModal('modal-staff-proposal');
+  },
+
+  handleProposalCategoryChange() {
+    const catSelect = document.getElementById('proposal-category');
+    const studentBlock = document.getElementById('proposal-student-block');
+    const titleLabel = document.getElementById('proposal-title-label');
+    const titleInput = document.getElementById('proposal-title');
+
+    if (!catSelect) return;
+    const val = catSelect.value;
+
+    if (val === 'nomination') {
+      if (studentBlock) studentBlock.classList.remove('hidden');
+      if (titleLabel) titleLabel.textContent = "Tavsiya Sababi / Yutug'i Sarlavhasi *";
+      if (titleInput) titleInput.placeholder = "Masalan: 'Viloyat maqom tanlovi g'olibi sifatida rag'batlantirish'";
+    } else {
+      if (studentBlock) studentBlock.classList.add('hidden');
+      if (titleLabel) titleLabel.textContent = "Taklif / Loyiha Sarlavhasi *";
+      if (titleInput) {
+        if (val === 'event') {
+          titleInput.placeholder = "Masalan: 'Yosh ijrochilar teatr festivali'";
+        } else if (val === 'challenge') {
+          titleInput.placeholder = "Masalan: 'Milliy hunarmandchilik sirlari video-chellenji'";
+        } else {
+          titleInput.placeholder = "Masalan: 'Tuman madaniyat markazi bilan hamkorlik loyihasi'";
+        }
+      }
+    }
+  },
+
+  handleStaffProposalSubmit(e) {
+    if (e) e.preventDefault();
+    const user = Auth.getCurrentUser();
+    if (!Auth.isStaff()) {
+      this.showToast("Faqat madaniyat xodimlari taklif yubora oladi!", "error");
+      return;
+    }
+
+    const categoryId = document.getElementById('proposal-category').value;
+    const title = (document.getElementById('proposal-title').value || '').trim();
+    const description = (document.getElementById('proposal-desc').value || '').trim();
+
+    if (!title || !description) {
+      this.showToast("Iltimos, barcha maydonlarni to'ldiring!", "warning");
+      return;
+    }
+
+    let targetStudentId = null;
+    let targetStudentName = null;
+    let targetStudentSchool = null;
+
+    if (categoryId === 'nomination') {
+      const studentSelect = document.getElementById('proposal-student-select');
+      if (studentSelect && studentSelect.value) {
+        const student = DataStore.getCreatorById(studentSelect.value);
+        if (student) {
+          targetStudentId = student.id;
+          targetStudentName = student.fullName;
+          targetStudentSchool = `${student.districtLabel}, ${student.school}`;
+        }
+      }
+    }
+
+    const proposalData = {
+      categoryId,
+      title,
+      description,
+      staffId: user.staffId || user.id,
+      staffName: user.fullName,
+      staffPosition: user.position || 'Madaniyat xodimi',
+      staffOrg: user.organization || 'Madaniyat markazi',
+      staffPhone: user.phone || '',
+      targetStudentId,
+      targetStudentName,
+      targetStudentSchool
+    };
+
+    DataStore.addStaffProposal(proposalData);
+
+    // Bosh Koordinator Inboxiga ham xabar tushadi
+    DataStore.addAdminInboxItem({
+      type: 'staff_proposal',
+      title: `Yangi Taklif: ${title}`,
+      phone: user.phone || 'Xodim',
+      code: `Yo'nalish: ${categoryId.toUpperCase()}`,
+      recipientName: `${user.fullName} (${user.organization || 'Madaniyat markazi'})`,
+      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    });
+
+    const form = document.getElementById('proposal-form');
+    const successBox = document.getElementById('proposal-success-box');
+    if (form) form.classList.add('hidden');
+    if (successBox) successBox.classList.remove('hidden');
+
+    this.refreshAllUI();
+    this.showToast("Taklif uchun rahmat, admin siz bilan bog'lanadi", "success");
+  },
+
+  renderStaffProposals() {
+    const tableBody = document.getElementById('admin-proposals-table-body');
+    const badge = document.getElementById('admin-proposals-count-badge');
+    if (!tableBody) return;
+
+    const proposals = DataStore.getStaffProposals();
+    if (badge) {
+      badge.textContent = `${proposals.length} ta taklif`;
+    }
+
+    if (proposals.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="px-5 py-6 text-center text-slate-400 text-xs">
+            Hozircha madaniyat xodimlaridan kelgan taklif yoki tashabbuslar mavjud emas.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    const categoryBadges = {
+      event: { label: '🎭 Tadbir / Festival', class: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
+      challenge: { label: '🎬 Chellenj Mavzusi', class: 'bg-rose-100 text-rose-800 border-rose-200' },
+      nomination: { label: '🌟 O\'quvchi Tavsiyasi', class: 'bg-amber-100 text-amber-800 border-amber-200' },
+      initiative: { label: '📢 Hududiy Loyiha', class: 'bg-blue-100 text-blue-800 border-blue-200' }
+    };
+
+    tableBody.innerHTML = proposals.map(p => {
+      const cat = categoryBadges[p.categoryId] || { label: p.categoryId, class: 'bg-slate-100 text-slate-800 border-slate-200' };
+      const isApproved = p.status === 'approved';
+
+      return `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="px-5 py-3">
+            <span class="inline-block px-2.5 py-1 rounded-lg text-[11px] font-black border ${cat.class}">
+              ${cat.label}
+            </span>
+          </td>
+          <td class="px-5 py-3">
+            <div class="font-bold text-slate-900">${p.staffName}</div>
+            <div class="text-[11px] text-slate-500">${p.staffPosition} • ${p.staffOrg}</div>
+            <a href="tel:${p.staffPhone}" class="inline-flex items-center gap-1 text-[11px] text-blue-600 font-bold hover:underline mt-0.5">
+              <i class="fa-solid fa-phone text-[10px]"></i> ${p.staffPhone}
+            </a>
+          </td>
+          <td class="px-5 py-3 max-w-sm">
+            <div class="font-bold text-slate-900 text-sm">${p.title}</div>
+            <div class="text-xs text-slate-600 mt-0.5 line-clamp-2" title="${p.description}">
+              ${p.description}
+            </div>
+            ${p.targetStudentName ? `
+              <div class="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-lg">
+                <i class="fa-solid fa-star text-amber-500"></i> Tavsiya etilgan: ${p.targetStudentName} (${p.targetStudentSchool || ''})
+              </div>
+            ` : ''}
+          </td>
+          <td class="px-5 py-3 text-xs text-slate-500 font-medium whitespace-nowrap">
+            <i class="fa-regular fa-clock mr-1 text-slate-400"></i>${p.createdAt}
+          </td>
+          <td class="px-5 py-3 text-center whitespace-nowrap">
+            ${isApproved ? `
+              <span class="px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-100 text-emerald-800 inline-flex items-center gap-1">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i> Tabriklaymiz, taklifingiz ma'qullandi!
+              </span>
+            ` : `
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 inline-flex items-center gap-1">
+                <i class="fa-solid fa-hourglass-half text-amber-600"></i> Taklif uchun rahmat, admin siz bilan bog'lanadi
+              </span>
+            `}
+          </td>
+          <td class="px-5 py-3 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end gap-1.5">
+              ${!isApproved ? `
+                <button onclick="App.handleApproveProposal('${p.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-sm transition inline-flex items-center gap-1" title="Ma'qullash">
+                  <i class="fa-solid fa-check"></i> Ma'qullash
+                </button>
+              ` : ''}
+
+              ${p.categoryId === 'challenge' ? `
+                <button onclick="App.handleConvertProposalToChallenge('${p.id}')" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl text-xs border border-rose-200 transition inline-flex items-center gap-1" title="Chellenjga aylantirish">
+                  <i class="fa-solid fa-film"></i> Chellenj qilish
+                </button>
+              ` : ''}
+
+              ${p.categoryId === 'event' ? `
+                <button onclick="App.handleConvertProposalToContest('${p.id}')" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-xl text-xs border border-indigo-200 transition inline-flex items-center gap-1" title="Tanlov/Tadbirga aylantirish">
+                  <i class="fa-solid fa-bullhorn"></i> Tadbir qilish
+                </button>
+              ` : ''}
+
+              <button onclick="App.handleDeleteProposal('${p.id}')" class="p-1.5 text-red-400 hover:text-red-600 rounded-lg hover:bg-slate-100 transition" title="O'chirish">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  },
+
+  handleApproveProposal(id) {
+    if (!Auth.isAdmin()) return;
+    DataStore.updateProposalStatus(id, 'approved', "Tabriklaymiz, taklifingiz ma'qullandi!");
+    this.renderStaffProposals();
+    this.renderStaffSection();
+    this.showToast("Taklif ma'qullandi! Xodimga 'Tabriklaymiz, taklifingiz ma'qullandi' xabari yetkazildi.", "success");
+  },
+
+  handleDeleteProposal(id) {
+    if (!Auth.isAdmin()) return;
+    if (confirm("Ushbu taklifni o'chirmoqchimisiz?")) {
+      DataStore.deleteProposal(id);
+      this.renderStaffProposals();
+      this.renderStaffSection();
+      this.showToast("Taklif o'chirildi.", "info");
+    }
+  },
+
+  handleConvertProposalToChallenge(id) {
+    if (!Auth.isAdmin()) return;
+    const proposals = DataStore.getStaffProposals();
+    const p = proposals.find(x => x.id === id);
+    if (!p) return;
+
+    DataStore.addChallenge({
+      title: p.title,
+      awardCoins: 25,
+      description: `${p.description} (Tashabbuskor: ${p.staffName}, ${p.staffOrg})`,
+      iconClass: 'fa-solid fa-lightbulb',
+      categoryLabel: 'Xodim Tashabbusi'
+    });
+
+    DataStore.updateProposalStatus(id, 'approved', "Tabriklaymiz, taklifingiz ma'qullandi va rasmiy chellenjga aylantirildi!");
+    this.refreshAllUI();
+    this.switchTab('challenges');
+    this.showToast(`🎬 "${p.title}" rasmiy chellenj sifatida e'lon qilindi!`, "success");
+  },
+
+  handleConvertProposalToContest(id) {
+    if (!Auth.isAdmin()) return;
+    const proposals = DataStore.getStaffProposals();
+    const p = proposals.find(x => x.id === id);
+    if (!p) return;
+
+    DataStore.addContest({
+      title: p.title,
+      awardCoins: 50,
+      eventDate: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+      location: p.staffOrg || 'Madaniyat Markazi',
+      description: `${p.description} (Tashabbuskor: ${p.staffName}, ${p.staffPosition})`
+    });
+
+    DataStore.updateProposalStatus(id, 'approved', "Tabriklaymiz, taklifingiz ma'qullandi va tadbirlar rejasiga kiritildi!");
+    this.refreshAllUI();
+    this.switchTab('contests');
+    this.showToast(`🎭 "${p.title}" tanlov va tadbirlar bo'limiga qo'shildi!`, "success");
+  },
+
+  checkStaffApprovedProposals() {
+    if (!Auth.isStaff()) return;
+    const user = Auth.getCurrentUser();
+    if (!user) return;
+
+    const proposals = DataStore.getStaffProposals();
+    const myApproved = proposals.filter(p => 
+      (p.staffId === user.staffId || p.staffId === user.id || p.staffPhone === user.phone) &&
+      p.status === 'approved'
+    );
+
+    myApproved.forEach(p => {
+      const key = `ijodkor_notified_approved_${p.id}`;
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, 'true');
+        const congratsText = document.getElementById('approved-congrats-text');
+        if (congratsText) {
+          congratsText.innerHTML = `Siz tomoningizdan Bosh Koordinatorga yuborilgan <strong>"${p.title}"</strong> nomli tashabbus ko'rib chiqildi va rasman ma'qullandi!`;
+        }
+        this.openModal('modal-staff-approved-congrats');
+        this.showToast(`🎉 Tabriklaymiz, taklifingiz ma'qullandi! ("${p.title}")`, "success");
+      }
+    });
   },
 
   // ================= 15. TANGA TAQDIM ETISH =================
@@ -1882,10 +2805,13 @@ const App = {
         </div>
       </div>
 
-      <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-        <button onclick="App.openVideoModal('${creator.id}')" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+        <button onclick="App.openVideoModal('${creator.id}')" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-play text-red-400"></i> Jonli Ijroni Ko'rish
         </button>
+        <span class="text-xs text-slate-500 font-semibold flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+          <i class="fa-regular fa-calendar-check text-emerald-600"></i> Yuklangan sana: ${creator.createdAt || 'Yangi'}
+        </span>
         <button onclick="App.closeModal('modal-creator-detail')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition">
           Yopish
         </button>
@@ -1926,7 +2852,7 @@ const App = {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `IJODKOR_UZ_Reyting_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `Kelajak_Ijodkori_Reyting_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -1940,7 +2866,7 @@ const App = {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `IJODKOR_UZ_Zaxira_${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `Kelajak_Ijodkori_Zaxira_${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IJODKOR.UZ - Iqtidorli Yoshlar Milliy Portali</title>
+  <title>Kelajak ijodkori - Iqtidorli Yoshlar Milliy Portali</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter -->
@@ -51,15 +51,37 @@
        ========================================================================= -->
   <div id="view-gateway" class="flex-1 flex flex-col justify-between items-center px-4 py-8 relative bg-cultural-gradient min-h-screen">
     
+    <!-- Gateway Tepasidagi Til Tanlash -->
+    <div class="absolute top-4 right-4 z-20" id="gateway-lang-switcher">
+      <div class="relative">
+        <button type="button" onclick="App.toggleLangDropdown('gateway')" class="px-3 py-1.5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow">
+          <span class="current-lang-flag">🇺🇿</span>
+          <span class="current-lang-code text-[11px] font-black uppercase">UZ</span>
+          <i class="fa-solid fa-chevron-down text-[8px] text-white/70"></i>
+        </button>
+        <div id="gateway-lang-dropdown-menu" class="hidden absolute right-0 top-full mt-1.5 bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-2xl shadow-xl z-50 py-1.5 w-36 text-xs font-bold text-white">
+          <button type="button" onclick="App.changeLanguage('uz')" class="w-full text-left px-3 py-2 hover:bg-white/10 flex items-center gap-2">
+            <span>🇺🇿</span> <span>O'zbekcha</span>
+          </button>
+          <button type="button" onclick="App.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-white/10 flex items-center gap-2">
+            <span>🇷🇺</span> <span>Русский</span>
+          </button>
+          <button type="button" onclick="App.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-white/10 flex items-center gap-2">
+            <span>🇬🇧</span> <span>English</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Yuqori qism: Logo va Tushuntirish -->
     <div class="text-center pt-8 sm:pt-12 space-y-3 max-w-2xl relative z-10">
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-amber-300 shadow-sm">
-        <i class="fa-solid fa-masks-theater text-amber-400"></i> O'zbekiston Iqtidorli Yoshlari Milliy Portali
+        <i class="fa-solid fa-masks-theater text-amber-400"></i> <span data-i18n="gateway_tagline">O'zbekiston Iqtidorli Yoshlari Milliy Portali</span>
       </div>
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white drop-shadow-md">
-        IJODKOR<span class="text-amber-400">.UZ</span>
+        <span data-i18n="app_title">Kelajak</span> <span class="text-amber-400" data-i18n="app_title_highlight">ijodkori</span>
       </h1>
-      <p class="text-slate-200 text-sm sm:text-base font-light max-w-lg mx-auto leading-relaxed">
+      <p class="text-slate-200 text-sm sm:text-base font-light max-w-lg mx-auto leading-relaxed" data-i18n="gateway_desc">
         Umumiy o'rta ta'lim maktablarining iqtidorli o'quvchilari, tumanlar bo'yicha saralash, ijodiy chellenjlar va mavsumiy tangalar tizimi.
       </p>
     </div>
@@ -74,8 +96,8 @@
             <i class="fa-solid fa-crown"></i>
           </div>
           <div class="text-left">
-            <span class="block leading-tight text-slate-950 font-black">Admin sifatida kirish</span>
-            <span class="text-xs text-amber-950 font-semibold opacity-90">Bosh Koordinator xonasi</span>
+            <span class="block leading-tight text-slate-950 font-black" data-i18n="gateway_btn_admin">Admin sifatida kirish</span>
+            <span class="text-xs text-amber-950 font-semibold opacity-90" data-i18n="gateway_btn_admin_sub">Bosh Koordinator xonasi</span>
           </div>
         </div>
         <i class="fa-solid fa-arrow-right text-slate-950 text-lg group-hover:translate-x-1.5 transition-transform"></i>
@@ -88,8 +110,8 @@
             <i class="fa-solid fa-id-badge"></i>
           </div>
           <div class="text-left">
-            <span class="block leading-tight text-white font-black">Madaniyat xodimi sifatida kirish</span>
-            <span class="text-xs text-blue-200 font-semibold">Tadbirlarga o'quvchilarni tanlash</span>
+            <span class="block leading-tight text-white font-black" data-i18n="gateway_btn_staff">Madaniyat xodimi sifatida kirish</span>
+            <span class="text-xs text-blue-200 font-semibold" data-i18n="gateway_btn_staff_sub">Tadbirlarga o'quvchilarni tanlash</span>
           </div>
         </div>
         <i class="fa-solid fa-arrow-right text-white text-lg group-hover:translate-x-1.5 transition-transform"></i>
@@ -102,8 +124,8 @@
             <i class="fa-solid fa-user-graduate"></i>
           </div>
           <div class="text-left">
-            <span class="block leading-tight text-white font-black">O'quvchi sifatida kirish</span>
-            <span class="text-xs text-emerald-200 font-semibold">O'zingizni qo'shing va tangalar yuting</span>
+            <span class="block leading-tight text-white font-black" data-i18n="gateway_btn_student">O'quvchi sifatida kirish</span>
+            <span class="text-xs text-emerald-200 font-semibold" data-i18n="gateway_btn_student_sub">O'zingizni qo'shing va tangalar yuting</span>
           </div>
         </div>
         <i class="fa-solid fa-arrow-right text-white text-lg group-hover:translate-x-1.5 transition-transform"></i>
@@ -115,9 +137,9 @@
     <div class="text-center pb-4 text-xs text-slate-300 relative z-10 space-y-1">
       <div class="flex items-center justify-center gap-2 font-bold text-amber-300">
         <i class="fa-solid fa-phone text-sm"></i>
-        <span>Bosh Koordinator: <a href="tel:+998996741440" class="underline tracking-wider hover:text-white">+998 99 674 14 40</a></span>
+        <span>Bosh Koordinator: <a href="tel:+998996741440" class="underline tracking-wider hover:text-white coordinator-phone-link">+998 99 674 14 40</a></span>
       </div>
-      <p class="text-slate-400 text-[11px]">© 2026 IJODKOR.UZ. Barcha huquqlar himoyalangan.</p>
+      <p class="text-slate-400 text-[11px]" data-i18n="gateway_footer">© 2026 Kelajak ijodkori. Barcha huquqlar himoyalangan.</p>
     </div>
 
   </div>
@@ -128,83 +150,111 @@
   <div id="view-app" class="hidden flex-1 flex-col bg-slate-50 text-slate-800 min-h-screen">
 
     <!-- Profil Header -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm max-w-full overflow-hidden">
+      <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 sm:h-20 gap-1.5 sm:gap-4">
           
           <!-- Logo & Server Sinxronlash indikatori -->
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="App.switchTab('creators')">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-700 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20">
-                <i class="fa-solid fa-masks-theater text-2xl"></i>
+          <div class="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+            <div class="flex items-center gap-2 sm:gap-3 cursor-pointer" onclick="App.switchTab('creators')">
+              <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-emerald-700 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20 shrink-0">
+                <i class="fa-solid fa-masks-theater text-lg sm:text-2xl"></i>
               </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="text-2xl font-black tracking-tight text-slate-900">IJODKOR<span class="text-emerald-600">.UZ</span></span>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1">
+                  <span class="text-base sm:text-2xl font-black tracking-tight text-slate-900 truncate">
+                    <span data-i18n="app_title">Kelajak</span> <span class="text-emerald-600" data-i18n="app_title_highlight">ijodkori</span>
+                  </span>
                 </div>
-                <p class="text-xs text-slate-500 font-medium">Iqtidorli Yoshlar & Chellenjlar Portali</p>
+                <p class="text-[10px] sm:text-xs text-slate-500 font-medium hidden md:block" data-i18n="app_subtitle">Iqtidorli Yoshlar & Chellenjlar Portali</p>
               </div>
             </div>
 
             <!-- Bulutli Server Sinxronlash Nishoni & Tugmasi -->
-            <div class="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
+            <div class="hidden xl:flex items-center gap-2 pl-2 border-l border-slate-200">
               <div id="cloud-sync-status-badge" class="px-2.5 py-1 rounded-xl text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1.5" title="Bulutli Server Holati">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="cloud-sync-text">Server: Ulangan</span>
+                <span id="cloud-sync-text" data-i18n="server_connected">Server: Ulangan</span>
               </div>
               <button onclick="App.handleManualSync()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1" title="Serverdan yangilash">
                 <i class="fa-solid fa-rotate" id="sync-icon"></i>
-                <span class="hidden md:inline">Sinxronlash</span>
+                <span data-i18n="server_sync">Sinxronlash</span>
               </button>
             </div>
           </div>
 
-          <!-- Asosiy Navigatsiya Menyusi -->
+          <!-- Asosiy Navigatsiya Menyusi (Desktop uchun) -->
           <nav class="hidden lg:flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-            <button id="nav-btn-creators" onclick="App.switchTab('creators')" class="nav-tab active px-3.5 py-2 rounded-xl text-xs font-bold transition-all">
-              <i class="fa-solid fa-users mr-1.5"></i> O'quvchilar
+            <button id="nav-btn-creators" onclick="App.switchTab('creators')" class="nav-tab active px-3 py-2 rounded-xl text-xs font-bold transition-all">
+              <i class="fa-solid fa-users mr-1"></i> <span data-i18n="nav_creators">O'quvchilar</span>
             </button>
-            <button id="nav-btn-challenges" onclick="App.switchTab('challenges')" class="nav-tab px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
-              <i class="fa-solid fa-video mr-1.5 text-red-500"></i> Chellenjlar 🔥
+            <button id="nav-btn-challenges" onclick="App.switchTab('challenges')" class="nav-tab px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+              <i class="fa-solid fa-video mr-1 text-red-500"></i> <span data-i18n="nav_challenges">Chellenjlar 🔥</span>
             </button>
-            <button id="nav-btn-contests" onclick="App.switchTab('contests')" class="nav-tab px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
-              <i class="fa-solid fa-bullhorn mr-1.5 text-emerald-600"></i> Tanlovlar
+            <button id="nav-btn-contests" onclick="App.switchTab('contests')" class="nav-tab px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+              <i class="fa-solid fa-bullhorn mr-1 text-emerald-600"></i> <span data-i18n="nav_contests">Tanlovlar</span>
             </button>
-            <button id="nav-btn-leaderboard" onclick="App.switchTab('leaderboard')" class="nav-tab px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
-              <i class="fa-solid fa-trophy mr-1.5 text-amber-500"></i> Reyting
+            <button id="nav-btn-leaderboard" onclick="App.switchTab('leaderboard')" class="nav-tab px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+              <i class="fa-solid fa-trophy mr-1 text-amber-500"></i> <span data-i18n="nav_leaderboard">Reyting</span>
             </button>
-            <button id="nav-btn-staff" onclick="App.switchTab('staff')" class="nav-tab px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
-              <i class="fa-solid fa-id-badge mr-1.5 text-blue-500"></i> Xodimlar
+            <button id="nav-btn-staff" onclick="App.switchTab('staff')" class="nav-tab px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+              <i class="fa-solid fa-id-badge mr-1 text-blue-500"></i> <span data-i18n="nav_staff">Xodimlar</span>
             </button>
-            <button id="nav-btn-admin" onclick="App.switchTab('admin')" class="nav-tab hidden px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
-              <i class="fa-solid fa-shield-halved mr-1.5 text-amber-600"></i> Admin Paneli
+            <button id="nav-btn-admin" onclick="App.switchTab('admin')" class="nav-tab hidden px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-slate-900">
+              <i class="fa-solid fa-shield-halved mr-1 text-amber-600"></i> <span data-i18n="nav_admin">Admin Paneli</span>
             </button>
           </nav>
 
-          <!-- Hozirgi Profil va Amallar -->
-          <div class="flex items-center gap-2">
+          <!-- Hozirgi Profil, Til Tanlash va Amallar -->
+          <div class="flex items-center gap-1 sm:gap-2 shrink-0">
             
+            <!-- TILNI TANLASH TUGMASI (UZ / RU / EN) -->
+            <div class="relative" id="lang-switcher-container">
+              <button type="button" onclick="App.toggleLangDropdown('app')" class="px-2 py-1.5 sm:px-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs border border-slate-300 transition flex items-center gap-1" title="Tilni tanlash / Выбрать язык / Choose language">
+                <span class="current-lang-flag text-xs sm:text-sm">🇺🇿</span>
+                <span class="current-lang-code text-[10px] sm:text-xs font-black uppercase">UZ</span>
+                <i class="fa-solid fa-chevron-down text-[8px] text-slate-500"></i>
+              </button>
+              <div id="lang-dropdown-menu" class="hidden absolute right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 py-1.5 w-36 text-xs font-bold text-slate-800">
+                <button type="button" onclick="App.changeLanguage('uz')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2">
+                  <span>🇺🇿</span> <span>O'zbekcha</span>
+                </button>
+                <button type="button" onclick="App.changeLanguage('ru')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2">
+                  <span>🇷🇺</span> <span>Русский</span>
+                </button>
+                <button type="button" onclick="App.changeLanguage('en')" class="w-full text-left px-3 py-2 hover:bg-emerald-50 hover:text-emerald-700 flex items-center gap-2">
+                  <span>🇬🇧</span> <span>English</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Profil Nishoni -->
-            <div id="user-profile-badge" class="flex items-center gap-2 px-3 py-2 rounded-2xl border bg-slate-100 text-xs font-black text-slate-800">
+            <div id="user-profile-badge" class="flex items-center gap-1 sm:gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl sm:rounded-2xl border bg-slate-100 text-[11px] sm:text-xs font-black text-slate-800 shrink-0">
               <!-- JS to'ldiradi -->
             </div>
 
             <!-- O'quvchi uchun Profilni Tahrirlash Tugmasi -->
-            <button id="btn-edit-my-profile" onclick="App.openEditProfileModal()" class="hidden px-2.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-2xl text-xs font-bold transition items-center gap-1" title="Profilimni tahrirlash">
+            <button id="btn-edit-my-profile" onclick="App.openEditProfileModal()" class="hidden px-2 py-1.5 sm:px-2.5 sm:py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-bold transition items-center gap-1 shrink-0" title="Profilimni tahrirlash">
               <i class="fa-solid fa-pen-to-square"></i>
-              <span class="hidden sm:inline">Tahrirlash</span>
+              <span class="hidden md:inline" data-i18n="btn_edit">Tahrirlash</span>
+            </button>
+
+            <!-- Madaniyat xodimi uchun Taklif Yuborish Tugmasi -->
+            <button id="btn-staff-proposal" onclick="App.openStaffProposalModal()" class="hidden px-2 py-1.5 sm:px-3 sm:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-xl sm:rounded-2xl text-[11px] sm:text-xs shadow transition items-center gap-1 shrink-0" title="Bosh Koordinatorga taklif yuborish">
+              <i class="fa-solid fa-lightbulb text-amber-300"></i>
+              <span class="hidden md:inline" data-i18n="btn_proposal">Taklif Yuborish</span>
             </button>
 
             <!-- Admin uchun Kodlar Qutisi Tugmasi -->
-            <button id="btn-admin-inbox" onclick="App.openAdminInboxModal()" class="hidden px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-2xl text-xs shadow transition items-center gap-1.5" title="Tasdiq kodlari">
+            <button id="btn-admin-inbox" onclick="App.openAdminInboxModal()" class="hidden p-2 sm:px-3 sm:py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl sm:rounded-2xl text-[11px] sm:text-xs shadow transition items-center gap-1 shrink-0" title="Tasdiq kodlari">
               <i class="fa-solid fa-bell"></i>
-              <span id="admin-inbox-badge" class="bg-red-600 text-white rounded-full px-1.5 py-0.2 text-[10px] font-black">0</span>
+              <span id="admin-inbox-badge" class="bg-red-600 text-white rounded-full px-1.5 py-0.2 text-[9px] sm:text-[10px] font-black">0</span>
             </button>
 
-            <!-- ESHIKCHA TUGMASI (Profildan Chiqish) -->
-            <button onclick="App.handleLogout()" class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-xs font-black shadow-md transition flex items-center gap-1.5" title="Profildan chiqish">
-              <i class="fa-solid fa-door-open text-sm"></i>
-              <span class="hidden sm:inline">Chiqish</span>
+            <!-- ESHIKCHA TUGMASI (Profildan Chiqish) - HECH QACHON QIRILMAYDI VA EKRANDAN CHIQMAYDI -->
+            <button onclick="App.handleLogout()" class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-black shadow-md transition flex items-center gap-1 shrink-0" title="Profildan chiqish">
+              <i class="fa-solid fa-door-open text-xs sm:text-sm"></i>
+              <span class="hidden md:inline" data-i18n="btn_exit">Chiqish</span>
             </button>
 
           </div>
@@ -214,18 +264,18 @@
     </header>
 
     <!-- Asosiy Mazmun -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-8 space-y-6 sm:space-y-8 overflow-hidden">
 
       <!-- 1-BO'LIM: O'QUVCHILAR KATALOGI (Tab: creators) -->
       <section id="section-creators" class="tab-section block space-y-6">
         
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-sparkles text-amber-500"></i> Ro'yxatdan O'tgan Maktab O'quvchilari
+              <h2 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-sparkles text-amber-500"></i> <span data-i18n="creators_title">Ro'yxatdan O'tgan Maktab O'quvchilari</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-0.5">Umumta'lim maktab o'quvchilari o'z rasmi bilan kiritilgan va tumanlar bo'yicha saralangan</p>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="creators_subtitle">Umumta'lim maktab o'quvchilari o'z rasmi bilan kiritilgan va tumanlar bo'yicha saralangan</p>
             </div>
 
             <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
@@ -255,8 +305,8 @@
 
         <div id="no-creators-msg" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200">
           <i class="fa-solid fa-user-slash text-4xl text-slate-300 mb-3"></i>
-          <h3 class="text-base font-bold text-slate-700">Hech qanday o'quvchi topilmadi</h3>
-          <p class="text-xs text-slate-500 mt-1">Boshqa tuman tanlang yoki qidiruv so'zini o'zgartiring.</p>
+          <h3 class="text-base font-bold text-slate-700" data-i18n="no_creators">Hech qanday o'quvchi topilmadi</h3>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="no_creators_sub">Boshqa tuman tanlang yoki qidiruv so'zini o'zgartiring.</p>
         </div>
 
       </section>
@@ -267,10 +317,10 @@
         <div class="bg-gradient-to-r from-red-700 via-rose-800 to-amber-700 text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="space-y-1">
             <span class="inline-block bg-white/20 text-white text-xs font-black px-3 py-1 rounded-full border border-white/30">
-              <i class="fa-solid fa-video mr-1.5"></i> Yangi Vazifalar & Chellenjlar
+              <i class="fa-solid fa-video mr-1.5"></i> <span data-i18n="nav_challenges">Yangi Vazifalar & Chellenjlar</span>
             </span>
-            <h2 class="text-2xl font-black">Video Rolik Olish Chellenjlari</h2>
-            <p class="text-xs text-rose-100 max-w-xl leading-relaxed">
+            <h2 class="text-2xl font-black" data-i18n="challenges_title">Video Rolik Olish Chellenjlari</h2>
+            <p class="text-xs text-rose-100 max-w-xl leading-relaxed" data-i18n="challenges_subtitle">
               Tadbirlardan tashqari beriladigan ijodiy video vazifalar. Rolikni oling, qatnashgan barcha o'quvchilarni yozib havolasini yuboring. Belgilangan muddat o'tib ketsa qabul qilinmaydi! Admin ko'rib chiqib tangalar taqdim etadi.
             </p>
           </div>
@@ -318,10 +368,10 @@
         <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-6 rounded-3xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <span class="inline-block bg-emerald-700/80 text-emerald-200 text-xs font-bold px-3 py-1 rounded-full mb-2 border border-emerald-500">
-              <i class="fa-solid fa-bullhorn mr-1"></i> Bosh Koordinator E'lonlari
+              <i class="fa-solid fa-bullhorn mr-1"></i> <span data-i18n="nav_contests">Tanlovlar</span>
             </span>
-            <h2 class="text-2xl font-black">Yangi Madaniy Tanlovlar va Bayramlar</h2>
-            <p class="text-xs text-emerald-100 mt-1 max-w-xl">
+            <h2 class="text-2xl font-black" data-i18n="contests_title">Yangi Madaniy Tanlovlar va Bayramlar</h2>
+            <p class="text-xs text-emerald-100 mt-1 max-w-xl" data-i18n="contests_subtitle">
               Barcha umumta'lim maktab o'quvchilari uchun e'lon qilingan yangi tanlovlar va bayramlar. Har bir ishtirok uchun tangalar taqdim etiladi!
             </p>
           </div>
@@ -343,10 +393,10 @@
         <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-6 rounded-3xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-950 text-amber-400 text-xs font-bold uppercase tracking-wider">
-              <i class="fa-solid fa-trophy"></i> 2026-yilgi Mavsum Reytingi
+              <i class="fa-solid fa-trophy"></i> <span data-i18n="nav_leaderboard">Reyting</span>
             </div>
-            <h2 class="text-2xl font-black">Eng Ko'p Tanga To'plagan Maktab O'quvchilari</h2>
-            <p class="text-xs text-slate-900 font-medium max-w-xl">
+            <h2 class="text-2xl font-black" data-i18n="leaderboard_title">Eng Ko'p Tanga To'plagan Maktab O'quvchilari</h2>
+            <p class="text-xs text-slate-900 font-medium max-w-xl" data-i18n="leaderboard_subtitle">
               Har bir qatnashilgan madaniy tadbir va ijodiy chellenj uchun tangalar taqdim etiladi.
             </p>
           </div>
@@ -362,7 +412,7 @@
 
         <div>
           <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-crown text-amber-500"></i> Peshqadamlar Shohsupasi (Top-3)
+            <i class="fa-solid fa-crown text-amber-500"></i> <span data-i18n="top_creators">Peshqadamlar Shohsupasi (Top-3)</span>
           </h3>
           <div id="podium-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             <!-- JS to'ldiradi -->
@@ -372,8 +422,8 @@
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h3 class="font-bold text-slate-900">Mavsumning Umumiy Reyting Jadvali</h3>
-              <p class="text-xs text-slate-500">O'quvchilarning to'plagan tangalari va faollik darajasi</p>
+              <h3 class="font-bold text-slate-900" data-i18n="leaderboard_title">Mavsumning Umumiy Reyting Jadvali</h3>
+              <p class="text-xs text-slate-500" data-i18n="leaderboard_subtitle">O'quvchilarning to'plagan tangalari va faollik darajasi</p>
             </div>
             <button onclick="App.exportLeaderboard()" class="px-3.5 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-download"></i> Jadvalni yuklab olish
@@ -408,10 +458,10 @@
         <div class="bg-blue-950 text-white p-6 rounded-3xl shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <span class="inline-block bg-blue-800 text-blue-200 text-xs font-semibold px-3 py-1 rounded-full mb-2">
-              <i class="fa-solid fa-building-columns mr-1"></i> Madaniyat Xodimlari Xizmati
+              <i class="fa-solid fa-building-columns mr-1"></i> <span data-i18n="nav_staff">Madaniyat Xodimlari Xizmati</span>
             </span>
-            <h2 class="text-2xl font-black">Bayram va Tadbirlarga Iqtidorli O'quvchilarni Jalb Qilish</h2>
-            <p class="text-xs text-blue-200 mt-1 max-w-xl">
+            <h2 class="text-2xl font-black" data-i18n="staff_title">Bayram va Tadbirlarga Iqtidorli O'quvchilarni Jalb Qilish</h2>
+            <p class="text-xs text-blue-200 mt-1 max-w-xl" data-i18n="staff_subtitle">
               Siz Navro'z, Mustaqillik, Yoshlar kuni yoki boshqa tadbirlar uchun o'quvchilarni tanlab, bevosita telefon orqali taklif qilishingiz mumkin.
             </p>
           </div>
@@ -423,12 +473,31 @@
         <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-address-book text-blue-600"></i> Madaniyat Xodimi uchun O'quvchilar Kontaktlari
+              <i class="fa-solid fa-address-book text-blue-600"></i> <span data-i18n="staff_contacts_title">Madaniyat Xodimi uchun O'quvchilar Kontaktlari</span>
             </h3>
-            <span class="text-xs text-slate-500 font-medium">Barcha tumanlar bo'yicha</span>
+            <span class="text-xs text-slate-500 font-medium" data-i18n="staff_contacts_subtitle">Barcha tumanlar bo'yicha</span>
           </div>
 
           <div id="staff-contacts-table-container">
+            <!-- JS to'ldiradi -->
+          </div>
+        </div>
+
+        <!-- XODIMNING O'ZI YUBORGAN TAKLIF VA TASHABBUSLARI RO'YXATI -->
+        <div id="staff-my-proposals-card" class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-lightbulb text-amber-500"></i> <span data-i18n="staff_my_proposals_title">Mening Bosh Koordinatorga Yuborgan Takliflarim</span>
+              </h3>
+              <p class="text-xs text-slate-500" data-i18n="staff_my_proposals_subtitle">Siz tomoningizdan kiritilgan madaniy tashabbuslar va ularning joriy holati</p>
+            </div>
+            <button onclick="App.openStaffProposalModal()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus-circle"></i> <span data-i18n="btn_send_new_proposal">Yangi Taklif Yuborish</span>
+            </button>
+          </div>
+
+          <div id="staff-my-proposals-container">
             <!-- JS to'ldiradi -->
           </div>
         </div>
@@ -443,8 +512,8 @@
             <span class="inline-block bg-amber-900/90 text-amber-300 text-xs font-bold px-3 py-1 rounded-full mb-2 border border-amber-600">
               <i class="fa-solid fa-crown mr-1"></i> Bosh Koordinator Xonasi (Admin)
             </span>
-            <h2 class="text-2xl font-black">Admin Boshqaruvi: Tangalar, Chellenjlar & Server</h2>
-            <p class="text-xs text-slate-300 mt-1 max-w-xl">
+            <h2 class="text-2xl font-black" data-i18n="admin_title">Admin Boshqaruvi: Tangalar, Chellenjlar & Server</h2>
+            <p class="text-xs text-slate-300 mt-1 max-w-xl" data-i18n="admin_subtitle">
               Chellenj roliklarini baholang, oylik tashriflar statistikasini ko'ring, xodimlarga qo'ng'iroq qiling va bulutli bazani boshqaring.
             </p>
           </div>
@@ -459,8 +528,8 @@
             <button onclick="App.openAwardModal()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-xs shadow-md transition flex items-center gap-2">
               <i class="fa-solid fa-coins"></i> Tanga Berish
             </button>
-            <button onclick="App.openChangePinModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-key text-amber-400"></i> Admin Kodi
+            <button onclick="App.openAdminSettingsModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5" title="Bosh koordinator raqami va kodini sozlash">
+              <i class="fa-solid fa-gear text-amber-400"></i> Koordinator Sozlamalari
             </button>
           </div>
         </div>
@@ -579,6 +648,39 @@
             </div>
           </div>
 
+          <!-- MADANIYAT XODIMLARIDAN KELGAN TAKLIF VA TASHABBUSLAR -->
+          <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-lightbulb text-amber-500"></i> Madaniyat Xodimlaridan Kelgan Taklif va Tashabbuslar
+                </h3>
+                <p class="text-xs text-slate-500">Madaniyat markazlari va soha yetakchilarining yangi tadbirlar, chellenjlar va iqtidorli o'quvchilarni tavsiya etish takliflari</p>
+              </div>
+              <span id="admin-proposals-count-badge" class="px-3 py-1 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl text-xs font-black">
+                0 ta taklif
+              </span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm text-slate-700">
+                <thead class="bg-slate-50 text-xs uppercase text-slate-500 font-semibold border-b border-slate-200">
+                  <tr>
+                    <th class="px-5 py-3">Yo'nalish</th>
+                    <th class="px-5 py-3">Taklif Muallifi (Xodim)</th>
+                    <th class="px-5 py-3">Mavzu va Tafsilot</th>
+                    <th class="px-5 py-3">Yuborilgan Sana</th>
+                    <th class="px-5 py-3 text-center">Holat</th>
+                    <th class="px-5 py-3 text-right">Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-proposals-table-body" class="divide-y divide-slate-100">
+                  <!-- JS to'ldiradi -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- O'quvchilar boshqaruvi jadvali -->
           <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex items-center justify-between flex-wrap gap-3">
@@ -586,9 +688,6 @@
                 <h3 class="font-bold text-slate-900">Bazada Mavjud O'quvchilar Ro'yxati</h3>
                 <p class="text-xs text-slate-500">O'quvchilar rasmi, maktabi, videolari va tangalar nazorati</p>
               </div>
-              <button onclick="App.handleClearDemoCreators()" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-bold transition flex items-center gap-1.5" title="Barcha 10 ta test namunaviy o'quvchilarni birdaniga tozalash">
-                <i class="fa-solid fa-broom"></i> Namuna O'quvchilarni Tozalash
-              </button>
             </div>
 
             <div class="overflow-x-auto">
@@ -618,13 +717,41 @@
     <footer class="bg-slate-950 text-slate-400 py-8 mt-12 border-t border-slate-800 text-xs">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <span class="font-bold text-white">IJODKOR.UZ</span> — Iqtidorli Maktab O'quvchilari va Chellenjlar Portali
+          <span class="font-bold text-white">Kelajak ijodkori</span> — Iqtidorli Maktab O'quvchilari va Chellenjlar Portali
         </div>
         <div class="text-amber-400 font-bold flex items-center gap-2">
-          <i class="fa-solid fa-phone"></i> Bosh Koordinator: <a href="tel:+998996741440" class="underline hover:text-white">+998 99 674 14 40</a>
+          <i class="fa-solid fa-phone"></i> Bosh Koordinator: <a href="tel:+998996741440" class="underline hover:text-white coordinator-phone-link">+998 99 674 14 40</a>
         </div>
       </div>
     </footer>
+
+    <!-- MOBIL QURILMALAR UCHUN PASTKI NAVIGATSIYA (lg:hidden) -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-1 py-1.5 flex items-center justify-around shadow-lg">
+      <button onclick="App.switchTab('creators')" class="mobile-nav-btn active flex-1 flex flex-col items-center justify-center py-1 text-emerald-700 font-bold transition" id="mobile-nav-creators">
+        <i class="fa-solid fa-users text-sm"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_creators">O'quvchilar</span>
+      </button>
+      <button onclick="App.switchTab('challenges')" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-500 font-bold transition" id="mobile-nav-challenges">
+        <i class="fa-solid fa-video text-sm text-red-500"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_challenges">Chellenj</span>
+      </button>
+      <button onclick="App.switchTab('contests')" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-500 font-bold transition" id="mobile-nav-contests">
+        <i class="fa-solid fa-bullhorn text-sm text-emerald-600"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_contests">Tanlovlar</span>
+      </button>
+      <button onclick="App.switchTab('leaderboard')" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-500 font-bold transition" id="mobile-nav-leaderboard">
+        <i class="fa-solid fa-trophy text-sm text-amber-500"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_leaderboard">Reyting</span>
+      </button>
+      <button onclick="App.switchTab('staff')" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-slate-500 font-bold transition" id="mobile-nav-staff">
+        <i class="fa-solid fa-id-badge text-sm text-blue-500"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_staff">Xodimlar</span>
+      </button>
+      <button onclick="App.switchTab('admin')" class="mobile-nav-btn hidden flex-1 flex flex-col items-center justify-center py-1 text-slate-500 font-bold transition" id="mobile-nav-admin">
+        <i class="fa-solid fa-shield-halved text-sm text-amber-600"></i>
+        <span class="text-[10px] mt-0.5" data-i18n="nav_admin">Admin</span>
+      </button>
+    </nav>
 
   </div>
 
@@ -667,19 +794,19 @@
     </div>
   </div>
 
-  <!-- 2. ADMIN MAXFIY KODINI O'ZGARTIRISH MODAL -->
+  <!-- 2. ADMIN VA BOSH KOORDINATOR SOZLAMALARI -->
   <div id="modal-admin-change-pin" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-admin-change-pin')"></div>
-    <div class="relative bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100">
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100 max-h-[90vh] overflow-y-auto">
       
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-key"></i>
+            <i class="fa-solid fa-gear"></i>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900">Admin Kodini O'zgartirish</h3>
-            <p class="text-xs text-slate-500">Yangi maxfiy kod o'rnatish</p>
+            <h3 class="text-lg font-black text-slate-900">Admin va Koordinator Sozlamalari</h3>
+            <p class="text-xs text-slate-500">Bosh koordinator raqami va admin kodini boshqarish</p>
           </div>
         </div>
         <button onclick="App.closeModal('modal-admin-change-pin')" class="text-slate-400 hover:text-slate-600 text-lg w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
@@ -687,43 +814,68 @@
         </button>
       </div>
 
-      <form onsubmit="App.handleChangePinSubmit(event)" class="mt-5 space-y-4">
+      <form onsubmit="App.handleSaveAdminSettings(event)" class="mt-5 space-y-4">
+        <!-- 1. BOSH KOORDINATOR TELEFON RAQAMI -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Hozirgi Maxfiy Kod *</label>
-          <input type="password" id="current-pin-input" required placeholder="Hozirgi kodingiz..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-phone text-emerald-600 mr-1"></i> Bosh Koordinator Telefon Raqami *
+          </label>
+          <input type="tel" id="admin-phone-input" required placeholder="+998 99 674 14 40" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+          <p class="text-[11px] text-slate-400 mt-1">Ushbu raqam sayt bosh sahifasi va pastki qismida avtomatik yangilanadi</p>
         </div>
 
+        <!-- 2. BOSH KOORDINATOR NOMI / F.I.O. -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Yangi Maxfiy Kod *</label>
-          <input type="password" id="new-pin-input" required minlength="4" placeholder="Kamida 4 ta belgi..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            <i class="fa-solid fa-user-tie text-blue-600 mr-1"></i> Koordinator Nomi (F.I.O.)
+          </label>
+          <input type="text" id="admin-name-input" placeholder="Madaniyat Bosh Koordinatori" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Yangi Kodni Tasdiqlang *</label>
-          <input type="password" id="confirm-pin-input" required minlength="4" placeholder="Yangi kodni qayta kiriting..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+        <div class="pt-3 border-t border-slate-100">
+          <span class="text-xs font-black text-slate-800 block mb-2">
+            <i class="fa-solid fa-key text-amber-500 mr-1"></i> Admin Maxfiy Kodini Yangilash (Ixtiyoriy)
+          </span>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Hozirgi Admin Kodi</label>
+              <input type="password" id="current-pin-input" placeholder="Kodni o'zgartirmaslik uchun bo'sh qoldiring" class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Yangi Admin Kodi</label>
+              <input type="password" id="new-pin-input" minlength="4" placeholder="Kamida 4 ta belgi" class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-600 mb-1">Yangi Kodni Tasdiqlang</label>
+              <input type="password" id="confirm-pin-input" minlength="4" placeholder="Yangi kodni qayta kiriting" class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:bg-white focus:outline-none">
+            </div>
+          </div>
         </div>
 
         <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-check"></i> Yangi Kodni Saqlash
+          <i class="fa-solid fa-floppy-disk"></i> Barcha Sozlamalarni Saqlash
         </button>
       </form>
 
     </div>
   </div>
 
-  <!-- 3. MADANIYAT XODIMI KIRISHI -->
+  <!-- 3. MADANIYAT XODIMI PROFILI (KIRISH VA REGISTRATSIYA) -->
   <div id="modal-staff-auth" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-staff-auth')"></div>
-    <div class="relative bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100">
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100 max-h-[92vh] overflow-y-auto">
       
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+      <!-- Sarlavha va yopish tugmasi -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">
             <i class="fa-solid fa-id-badge"></i>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900">Madaniyat Xodimi Kirishi</h3>
-            <p class="text-xs text-slate-500">Tasdiq kodi faqat Admin profiliga yuboriladi</p>
+            <h3 id="staff-modal-title" class="text-lg font-black text-slate-900">Madaniyat Xodimi Profili</h3>
+            <p id="staff-modal-subtitle" class="text-xs text-slate-500">Kelajak ijodkori portali</p>
           </div>
         </div>
         <button onclick="App.closeModal('modal-staff-auth')" class="text-slate-400 hover:text-slate-600 text-lg w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
@@ -731,79 +883,202 @@
         </button>
       </div>
 
-      <!-- 1-BOSQICH -->
-      <form id="staff-auth-step1" onsubmit="App.handleStaffRequestCode(event)" class="mt-5 space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Ism va Familiyangiz *</label>
-          <input type="text" id="staff-fullname" required placeholder="Masalan: Sardorbek Aliyev" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Kim sifatida ishlaysiz? (Lavozim) *</label>
-            <input type="text" id="staff-position" required placeholder="Rejissyor, Koordinator, Boshlovchi..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Muassasa / Madaniyat markazi *</label>
-            <input type="text" id="staff-org" required placeholder="Madaniyat boshqarmasi..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz *</label>
-          <div class="relative">
-            <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="tel" id="staff-phone" required placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
-          </div>
-          <p class="text-[11px] text-blue-700 mt-1">
-            <i class="fa-solid fa-shield-halved mr-1"></i> Telefoningiz va tasdiqlash kodi faqat Bosh Koordinatorning shaxsiy profiliga boradi.
-          </p>
-        </div>
-
-        <button type="submit" class="w-full py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-paper-plane"></i> Admindan Tasdiq Kodini So'rash
+      <!-- Tab almashtirgich: Profilga Kirish / Yangi Profil Ochish -->
+      <div id="staff-auth-tabs" class="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 rounded-2xl mt-4">
+        <button type="button" id="tab-btn-staff-login" onclick="App.switchStaffAuthTab('login')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm">
+          <i class="fa-solid fa-right-to-bracket"></i> Profilga Kirish
         </button>
-      </form>
+        <button type="button" id="tab-btn-staff-register" onclick="App.switchStaffAuthTab('register')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-user-plus"></i> Yangi Profil Ochish
+        </button>
+      </div>
 
-      <!-- 2-BOSQICH -->
-      <div id="staff-auth-step2" class="hidden mt-6 space-y-4">
-        <div class="p-4 bg-blue-50 border border-blue-200 rounded-2xl text-center space-y-1">
-          <span class="text-xs font-black text-blue-900 block">Tasdiqlash Kodi Admin Profiliga Yuborildi!</span>
-          <p class="text-xs text-blue-700">
-            Bosh koordinator (+998 99 674 14 40) sizga aytgan 4 xonali ID-kodni kiriting:
+      <!-- 1-PANEL: XODIM PROFILIGA KIRISH (LOGIN) -->
+      <div id="staff-panel-login" class="mt-4">
+        <form onsubmit="App.handleStaffLogin(event)" class="space-y-4">
+          <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-2xl text-xs text-blue-900 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-blue-600 text-sm"></i>
+            <span>Boshqa qurilma yoki telefondan o'z xodim profilingizga kiring:</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Ismingiz yoki Telefon Raqamingiz *
+            </label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="text" id="staff-login-identifier" required placeholder="Masalan: Sardorbek Aliyev yoki 901234567" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Ro'yxatdan o'tgan to'liq ism yoki telefon raqamingiz</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Profil Maxfiy Kodi (Parol) *
+            </label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="password" id="staff-login-pin" required placeholder="Profil kodingizni kiriting" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-1">
+            <button type="button" onclick="App.switchStaffAuthTab('forgot')" class="text-blue-700 hover:text-blue-800 font-bold hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-key"></i> Profil kodi esimdan chiqib qoldi
+            </button>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-right-to-bracket"></i> Profilga Kirish
+          </button>
+
+          <div class="text-center pt-2 border-t border-slate-100">
+            <p class="text-xs text-slate-500">
+              Profilingiz yo'qmi? 
+              <button type="button" onclick="App.switchStaffAuthTab('register')" class="text-blue-700 font-black hover:underline ml-1">
+                Yangi xodim profili ochish
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- 2-PANEL: YANGI XODIM PROFILI OCHISH (REGISTER) -->
+      <div id="staff-panel-register" class="mt-4 hidden">
+        <form onsubmit="App.handleStaffRegister(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">To'liq Ism va Familiyangiz *</label>
+            <input type="text" id="staff-fullname" required placeholder="Masalan: Sardorbek Aliyev" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Kim sifatida ishlaysiz? (Lavozim) *</label>
+              <input type="text" id="staff-position" required placeholder="Rejissyor, Maktab madaniyat yetakchisi..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Muassasa / Madaniyat markazi *</label>
+              <input type="text" id="staff-org" required placeholder="Madaniyat boshqarmasi yoki maktab" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz *</label>
+              <div class="relative">
+                <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="tel" id="staff-phone" required placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Profil Maxfiy Kodi (Parol) *</label>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="staff-pin" required minlength="4" placeholder="Masalan: 1234 yoki maxfiy kod" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-blue-700">
+            <i class="fa-solid fa-shield-halved mr-1"></i> Telefoningiz va ma'lumotlaringiz xavfsiz saqlanadi va faqat Bosh Koordinatorga ko'rinadi.
           </p>
+
+          <button type="submit" class="w-full py-3 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-user-check"></i> Ro'yxatdan O'tish va Profil Ochish
+          </button>
+
+          <div class="text-center pt-2 border-t border-slate-100">
+            <p class="text-xs text-slate-500">
+              Profilingiz bormi? 
+              <button type="button" onclick="App.switchStaffAuthTab('login')" class="text-blue-700 font-black hover:underline ml-1">
+                Profilga kirish
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- 3-PANEL: XODIM PROFIL KODINI TIKLASH (FORGOT PIN / SMS) -->
+      <div id="staff-panel-forgot" class="mt-4 hidden space-y-4">
+        
+        <!-- Step 1: Telefon raqami kiritish -->
+        <div id="staff-forgot-step1" class="space-y-4">
+          <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-start gap-2.5">
+            <i class="fa-solid fa-key text-amber-600 text-sm mt-0.5 shrink-0"></i>
+            <div>
+              <span class="font-bold block">Xodim profil kodini unutdingizmi?</span>
+              <span>Ro'yxatdan o'tgan telefon raqamingizni kiriting. Ushbu raqamga 4 talik tasdiqlash kodi yuboriladi va profilingizni tiklaysiz.</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ro'yxatdan O'tgan Telefon Raqamingiz *</label>
+            <div class="relative">
+              <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="tel" id="staff-forgot-phone" placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <button type="button" onclick="App.handleStaffForgotSendSms(event)" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Tasdiqlash Kodini Yuborish (SMS)
+          </button>
+
+          <button type="button" onclick="App.switchStaffAuthTab('login')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Bekor qilish va Kirishga qaytish
+          </button>
         </div>
 
-        <div>
-          <input type="text" id="staff-verify-code-input" maxlength="4" placeholder="••••" class="otp-digit-input w-full py-3 bg-slate-50 border-2 border-blue-500 rounded-2xl text-blue-950 focus:bg-white focus:outline-none">
+        <!-- Step 2: 4 talik kod va yangi parol -->
+        <div id="staff-forgot-step2" class="hidden space-y-4">
+          <div id="staff-forgot-sms-box" class="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-950 text-center space-y-1">
+            <i class="fa-solid fa-circle-check text-blue-600 text-lg"></i>
+            <p class="font-black text-sm text-blue-900">4 talik tasdiqlash kodi yuborildi!</p>
+            <p id="staff-forgot-sms-hint" class="text-xs text-blue-800">Raqamingizga SMS bordi. Kodni kiriting:</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">4 talik Tasdiqlash Kodi *</label>
+            <input type="text" id="staff-forgot-code" maxlength="4" placeholder="••••" class="otp-digit-input w-full py-3 bg-slate-50 border-2 border-blue-500 rounded-2xl text-blue-950 text-center text-2xl font-black tracking-widest focus:bg-white focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Yangi Profil Maxfiy Kodi (Parol) *</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="text" id="staff-forgot-new-pin" minlength="4" placeholder="Yangi 4+ xonali kod o'ylab toping" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Keyingi safar shu yangi kod bilan kirasiz</p>
+          </div>
+
+          <div class="flex gap-2">
+            <button type="button" onclick="App.handleStaffForgotVerifyAndReset(event)" class="flex-1 py-3 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Kodni Yangilash va Kirish
+            </button>
+            <button type="button" onclick="App.switchStaffAuthTab('forgot')" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold">
+              Orqaga
+            </button>
+          </div>
         </div>
 
-        <div class="flex gap-2">
-          <button onclick="App.handleStaffVerifyCode()" class="flex-1 py-3 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-2xl text-sm shadow-md transition">
-            Tasdiqlash va Kirish
-          </button>
-          <button onclick="App.resetStaffAuthStep()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold">
-            Orqaga
-          </button>
-        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- 4. O'QUVCHI REGISTRATSIYASI -->
+  <!-- 4. O'QUVCHI PROFILI (KIRISH VA REGISTRATSIYA) -->
   <div id="modal-student-auth" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
     <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-student-auth')"></div>
-    <div class="relative bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100">
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100 max-h-[92vh] overflow-y-auto">
       
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+      <!-- Sarlavha va yopish tugmasi -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">
             <i class="fa-solid fa-user-graduate"></i>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900">Maktab O'quvchisi Profilini Yaratish</h3>
-            <p class="text-xs text-slate-500">O'z rasmingizni yuklang va ma'lumotlaringizni to'ldiring</p>
+            <h3 id="student-modal-title" class="text-lg font-black text-slate-900">O'quvchi Profili</h3>
+            <p id="student-modal-subtitle" class="text-xs text-slate-500">Kelajak ijodkori portali</p>
           </div>
         </div>
         <button onclick="App.closeModal('modal-student-auth')" class="text-slate-400 hover:text-slate-600 text-lg w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
@@ -811,101 +1086,227 @@
         </button>
       </div>
 
-      <!-- 1-BOSQICH -->
-      <form id="student-auth-step1" onsubmit="App.handleStudentRequestSms(event)" class="mt-5 space-y-4">
-        
-        <!-- O'Z RASMINI YUKLASH -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">
-            O'z Rasmingizni Yuklang (Galereya yoki kameradan) *
-          </label>
-          <div class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
-            <div id="photo-preview-container" class="w-16 h-16 rounded-2xl bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
-              <i class="fa-solid fa-camera text-slate-400 text-xl" id="photo-preview-placeholder"></i>
-              <img id="photo-preview-img" class="w-full h-full object-cover hidden" alt="Rasm">
-            </div>
-            <div class="flex-1">
-              <input type="file" id="std-photo-input" accept="image/*" class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer">
-              <p class="text-[11px] text-slate-500 mt-1">O'zingizning aniq rasmingizni tanlang</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="sm:col-span-2">
-            <label class="block text-xs font-bold text-slate-700 mb-1">To'liq Ism va Familiyangiz *</label>
-            <input type="text" id="std-fullname" required placeholder="Masalan: Azizbek Nazarov" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Yoshingiz *</label>
-            <input type="number" id="std-age" min="7" max="25" value="16" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Tumaningiz yoki Shahringiz *</label>
-            <input list="tumanlar-datalist" id="std-district" required placeholder="Tanlang yoki yozing (Masalan: Chilonzor tumani)" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-            <datalist id="tumanlar-datalist">
-              <!-- JS to'ldiradi -->
-            </datalist>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Maktabingizni kiriting *</label>
-            <input type="text" id="std-school" required placeholder="Masalan: 15-umumiy o'rta ta'lim maktabi yoki 28-maktab" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Jonli Chiqish Videongiz (YouTube yoki Telegram) *</label>
-          <div class="relative">
-            <i class="fa-brands fa-youtube absolute left-3.5 top-1/2 -translate-y-1/2 text-red-500 text-sm"></i>
-            <input type="text" id="std-video" required placeholder="https://youtube.com/... yoki https://t.me/kanal/..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Avtobiografiyangiz va Yutuqlaringiz</label>
-          <textarea id="std-bio" rows="2" placeholder="Qaysi tanlovlarda qatnashgansiz, qanday iqtidoringiz bor..." class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz (1 ta profil ochiladi) *</label>
-          <div class="relative">
-            <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="tel" id="std-phone" required placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
-          </div>
-          <p class="text-[11px] text-emerald-700 mt-1">
-            <i class="fa-solid fa-lock mr-1"></i> Telefon raqamingiz faqat Madaniyat xodimlari va Adminga ko'rinadi.
-          </p>
-        </div>
-
-        <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-comment-sms"></i> Kod Olish va Ro'yxatdan O'tish
+      <!-- Tab almashtirgich: Profilga Kirish / Yangi Profil Ochish -->
+      <div id="student-auth-tabs" class="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 rounded-2xl mt-4">
+        <button type="button" id="tab-btn-student-login" onclick="App.switchStudentAuthTab('login')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm">
+          <i class="fa-solid fa-right-to-bracket"></i> Profilga Kirish
         </button>
-      </form>
+        <button type="button" id="tab-btn-student-register" onclick="App.switchStudentAuthTab('register')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+          <i class="fa-solid fa-user-plus"></i> Yangi Profil Ochish
+        </button>
+      </div>
 
-      <!-- 2-BOSQICH -->
-      <div id="student-auth-step2" class="hidden mt-6 space-y-4">
-        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-1">
-          <span class="text-xs font-black text-emerald-900 block">Tasdiqlash Kodi Yuborildi!</span>
-          <p class="text-xs text-emerald-700" id="student-sms-hint-text">
-            Tasdiqlash kodi Bosh Koordinator profiliga va raqamingizga yuborildi. Uni kiriting:
-          </p>
-        </div>
+      <!-- 1-PANEL: PROFILGA KIRISH (LOGIN) -->
+      <div id="student-panel-login" class="mt-4">
+        <form onsubmit="App.handleStudentLogin(event)" class="space-y-4">
+          <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl text-xs text-emerald-900 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-emerald-600 text-sm"></i>
+            <span>Boshqa qurilma yoki telefondan o'z profilingizga kiring:</span>
+          </div>
 
-        <div>
-          <input type="text" id="student-verify-code-input" maxlength="4" placeholder="••••" class="otp-digit-input w-full py-3 bg-slate-50 border-2 border-emerald-500 rounded-2xl text-emerald-950 focus:bg-white focus:outline-none">
-        </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Ismingiz, Nikingiz yoki Telefon Raqamingiz *
+            </label>
+            <div class="relative">
+              <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="text" id="std-login-identifier" required placeholder="Masalan: Azizbek yoki @azizbek yoki 901234567" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Ro'yxatdan o'tgan ism, taxallus (@nik) yoki telefon raqam</p>
+          </div>
 
-        <div class="flex gap-2">
-          <button onclick="App.handleStudentVerifyCode()" class="flex-1 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl text-sm shadow-md transition">
-            Tasdiqlash va Kirish
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">
+              Profil Maxfiy Kodi (Parol) *
+            </label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="password" id="std-login-pin" required placeholder="Profil kodingizni kiriting" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-1">
+            <button type="button" onclick="App.switchStudentAuthTab('forgot')" class="text-emerald-700 hover:text-emerald-800 font-bold hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-key"></i> Profil kodi esimdan chiqib qoldi
+            </button>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-right-to-bracket"></i> Profilga Kirish
           </button>
-          <button onclick="App.resetStudentAuthStep()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold">
-            Orqaga
+
+          <div class="text-center pt-2 border-t border-slate-100">
+            <p class="text-xs text-slate-500">
+              Profilingiz yo'qmi? 
+              <button type="button" onclick="App.switchStudentAuthTab('register')" class="text-emerald-700 font-black hover:underline ml-1">
+                Yangi profil yarating (+10 tanga)
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- 2-PANEL: YANGI PROFIL OCHISH (REGISTER) -->
+      <div id="student-panel-register" class="mt-4 hidden">
+        <form onsubmit="App.handleStudentRegister(event)" class="space-y-4">
+          <!-- O'Z RASMINI YUKLASH -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">
+              O'z Rasmingizni Yuklang (Galereya yoki kameradan) *
+            </label>
+            <div class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+              <div id="photo-preview-container" class="w-16 h-16 rounded-2xl bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+                <i class="fa-solid fa-camera text-slate-400 text-xl" id="photo-preview-placeholder"></i>
+                <img id="photo-preview-img" class="w-full h-full object-cover hidden" alt="Rasm">
+              </div>
+              <div class="flex-1">
+                <input type="file" id="std-photo-input" accept="image/*" class="text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 cursor-pointer">
+                <p class="text-[11px] text-slate-500 mt-1">O'zingizning aniq rasmingizni tanlang</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">To'liq Ism va Familiyangiz *</label>
+              <input type="text" id="std-fullname" required placeholder="Masalan: Azizbek Nazarov" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Profil Niki (Taxallus) *</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">@</span>
+                <input type="text" id="std-nickname" required placeholder="azizbek_art" class="w-full pl-8 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Profil Maxfiy Kodi (Parol) *</label>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="std-pin" required minlength="4" placeholder="Masalan: 1234 yoki maxfiy kod" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+              </div>
+              <p class="text-[10px] text-slate-400 mt-0.5">Boshqa telefondan kirishda shu kod kerak bo'ladi</p>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Yoshingiz *</label>
+              <input type="number" id="std-age" min="7" max="25" value="16" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Tumaningiz yoki Shahringiz *</label>
+              <input list="tumanlar-datalist" id="std-district" required placeholder="Masalan: Chilonzor tumani" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Maktabingiz *</label>
+              <input type="text" id="std-school" required placeholder="Masalan: 15-maktab" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Jonli Chiqish Videongiz (YouTube yoki Telegram) *</label>
+            <div class="relative">
+              <i class="fa-brands fa-youtube absolute left-3.5 top-1/2 -translate-y-1/2 text-red-500 text-sm"></i>
+              <input type="text" id="std-video" required placeholder="https://youtube.com/... yoki https://t.me/kanal/..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqamingiz (Kodni tiklash uchun) *</label>
+            <div class="relative">
+              <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="tel" id="std-phone" required placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-emerald-700 mt-1">
+              <i class="fa-solid fa-shield-halved mr-1"></i> Parolingiz esdan chiqsa, tasdiqlash kodi faqat shu raqamga yuboriladi.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Avtobiografiyangiz va Yutuqlaringiz (Ixtiyoriy)</label>
+            <textarea id="std-bio" rows="2" placeholder="Qaysi tanlovlarda qatnashgansiz, qanday iqtidoringiz bor..." class="w-full px-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-sparkles"></i> Profilni Yaratish va Kirish (+10 Tanga)
+          </button>
+
+          <div class="text-center pt-2 border-t border-slate-100">
+            <p class="text-xs text-slate-500">
+              Profilingiz bormi? 
+              <button type="button" onclick="App.switchStudentAuthTab('login')" class="text-emerald-700 font-black hover:underline ml-1">
+                Profilga kirish
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- 3-PANEL: PROFIL KODINI TIKLASH (FORGOT PIN / SMS) -->
+      <div id="student-panel-forgot" class="mt-4 hidden space-y-4">
+        
+        <!-- Step 1: Telefon raqamini kiritish -->
+        <div id="student-forgot-step1" class="space-y-4">
+          <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-start gap-2.5">
+            <i class="fa-solid fa-key text-amber-600 text-sm mt-0.5 shrink-0"></i>
+            <div>
+              <span class="font-bold block">Profil kodini unutdingizmi?</span>
+              <span>Ro'yxatdan o'tgan telefon raqamingizni kiriting. Ushbu raqamga 4 talik tasdiqlash kodi yuboriladi va profilingizni qayta tiklaysiz.</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Ro'yxatdan O'tgan Telefon Raqamingiz *</label>
+            <div class="relative">
+              <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="tel" id="std-forgot-phone" placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+
+          <button type="button" onclick="App.handleStudentForgotSendSms(event)" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Tasdiqlash Kodini Yuborish (SMS)
+          </button>
+
+          <button type="button" onclick="App.switchStudentAuthTab('login')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Bekor qilish va Kirishga qaytish
           </button>
         </div>
+
+        <!-- Step 2: 4 talik kod va yangi parol -->
+        <div id="student-forgot-step2" class="hidden space-y-4">
+          <div id="student-forgot-sms-box" class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-950 text-center space-y-1">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>
+            <p class="font-black text-sm text-emerald-900">4 talik tasdiqlash kodi yuborildi!</p>
+            <p id="student-forgot-sms-hint" class="text-xs text-emerald-800">Raqamingizga SMS bordi. Kodni kiriting:</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">4 talik Tasdiqlash Kodi *</label>
+            <input type="text" id="std-forgot-code" maxlength="4" placeholder="••••" class="otp-digit-input w-full py-3 bg-slate-50 border-2 border-emerald-500 rounded-2xl text-emerald-950 text-center text-2xl font-black tracking-widest focus:bg-white focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Yangi Profil Maxfiy Kodi (Parol) *</label>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="text" id="std-forgot-new-pin" minlength="4" placeholder="Yangi 4+ xonali kod o'ylab toping" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">Keyingi safar shu yangi kod bilan kirasiz</p>
+          </div>
+
+          <div class="flex gap-2">
+            <button type="button" onclick="App.handleStudentForgotVerifyAndReset(event)" class="flex-1 py-3 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-circle-check"></i> Kodni Yangilash va Kirish
+            </button>
+            <button type="button" onclick="App.switchStudentAuthTab('forgot')" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold">
+              Orqaga
+            </button>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -957,6 +1358,32 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Profil Niki (@taxallus)</label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">@</span>
+              <input type="text" id="edit-nickname" placeholder="taxallus" class="w-full pl-8 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqami (Yangi raqamga almashtirish) *</label>
+            <div class="relative">
+              <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input type="tel" id="edit-phone" placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Profil Maxfiy Kodi (Yangi parol - ixtiyoriy)</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="edit-pin" minlength="4" placeholder="Kodni o'zgartirmaslik uchun bo'sh qoldiring yoki yangi kod yozing" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">Parolni o'zgartirmoqchi bo'lsangiz, yangi kod kiriting</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Tumaningiz yoki Shahringiz *</label>
             <input list="tumanlar-datalist" id="edit-district" required class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white focus:outline-none">
           </div>
@@ -984,6 +1411,73 @@
             <i class="fa-solid fa-floppy-disk"></i> O'zgarishlarni Saqlash
           </button>
           <button type="button" onclick="App.closeModal('modal-edit-profile')" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-bold">
+            Bekor qilish
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- 5B. MADANIYAT XODIMI PROFILINI TAHRIRLASH -->
+  <div id="modal-edit-staff-profile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-edit-staff-profile')"></div>
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">Xodim Profilini Tahrirlash</h3>
+            <p class="text-xs text-slate-500">Ma'lumotlar, telefon va parolni yangilang</p>
+          </div>
+        </div>
+        <button onclick="App.closeModal('modal-edit-staff-profile')" class="text-slate-400 hover:text-slate-600 text-lg w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="App.handleEditStaffSubmit(event)" class="mt-5 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">To'liq F.I.O. *</label>
+          <input type="text" id="edit-staff-fullname" required class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Lavozimingiz *</label>
+            <input type="text" id="edit-staff-position" required class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Tashkilot / Muassasa *</label>
+            <input type="text" id="edit-staff-org" required class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Telefon Raqami (Yangi raqamga almashtirish) *</label>
+          <div class="relative">
+            <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="tel" id="edit-staff-phone" required placeholder="+998 90 123 45 67" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Yangi Profil Maxfiy Kodi (Parol - ixtiyoriy)</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="edit-staff-pin" minlength="4" placeholder="Kodni o'zgartirmaslik uchun bo'sh qoldiring" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">Parolni o'zgartirmoqchi bo'lsangiz, yangi kod yozing</p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="submit" class="flex-1 py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> O'zgarishlarni Saqlash
+          </button>
+          <button type="button" onclick="App.closeModal('modal-edit-staff-profile')" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-bold">
             Bekor qilish
           </button>
         </div>
@@ -1389,12 +1883,128 @@
     </div>
   </div>
 
+  <!-- 15. MADANIYAT XODIMLARI TAKLIF VA TASHABBUSLARI MODAL -->
+  <div id="modal-staff-proposal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-staff-proposal')"></div>
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Sarlavha -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-black text-slate-900">Bosh Koordinatorga Taklif Yuborish</h3>
+            <p class="text-xs text-slate-500">Madaniy tadbirlar, chellenj mavzulari yoki iqtidorli o'quvchilarni tavsiya etish</p>
+          </div>
+        </div>
+        <button onclick="App.closeModal('modal-staff-proposal')" class="text-slate-400 hover:text-slate-600 text-lg w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="proposal-form" onsubmit="App.handleStaffProposalSubmit(event)" class="mt-4 space-y-4">
+        
+        <!-- Taklif turi -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Taklif Yo'nalishi (Kategoriya) *</label>
+          <select id="proposal-category" required onchange="App.handleProposalCategoryChange()" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none font-medium">
+            <option value="event">🎭 Yangi Madaniy Tadbir / Konsert / Festival</option>
+            <option value="challenge">🎬 Yangi Video Chellenj Mavzusi</option>
+            <option value="nomination">🌟 Iqtidorli O'quvchini Mukofotga Tavsiya Etish</option>
+            <option value="initiative">📢 Hududiy Madaniy Loyiha / Tashabbus</option>
+          </select>
+        </div>
+
+        <!-- Sarlavha / Mavzu -->
+        <div>
+          <label id="proposal-title-label" class="block text-xs font-bold text-slate-700 mb-1">Taklif / Loyiha Sarlavhasi *</label>
+          <input type="text" id="proposal-title" required placeholder="Masalan: 'Yosh baxshilar va dostonchilar bellashuvi'" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+        </div>
+
+        <!-- Agar o'quvchini tavsiya etish bo'lsa: O'quvchi tanlash bloki -->
+        <div id="proposal-student-block" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tavsiya Etilayotgan O'quvchi *</label>
+          <select id="proposal-student-select" class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none">
+            <!-- JS to'ldiradi -->
+          </select>
+          <p class="text-[11px] text-slate-400 mt-1">Ro'yxatdan o'tgan iqtidorli o'quvchilardan birini tanlang</p>
+        </div>
+
+        <!-- Batafsil tavsif va maqsad -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Taklif / Tashabbus Haqida Batafsil Ma'lumot *</label>
+          <textarea id="proposal-desc" rows="4" required placeholder="Ushbu tadbir yoki chellenj qayerda o'tkazilishi, o'quvchilarga qanday foyda berishi va tashkiliy takliflaringizni yozing..." class="w-full px-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white focus:outline-none leading-relaxed"></textarea>
+        </div>
+
+        <div class="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-900 flex items-start gap-2">
+          <i class="fa-solid fa-circle-info text-blue-600 mt-0.5 shrink-0"></i>
+          <span>Ushbu taklif to'g'ridan-to'g'ri Bosh Koordinator (Admin) paneliga tushadi. Koordinator uni ma'qullab, yangi umumiy chellenj yoki rasmiy tadbir sifatida e'lon qilishi mumkin.</span>
+        </div>
+
+        <!-- Tugmalar -->
+        <div class="flex gap-2 pt-2 border-t border-slate-100">
+          <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-2xl text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Bosh Koordinatorga Yuborish
+          </button>
+          <button type="button" onclick="App.closeModal('modal-staff-proposal')" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold">
+            Bekor qilish
+          </button>
+        </div>
+
+      </form>
+
+      <!-- MUVAFFAQIYATLI YUBORILGANDAGI XABAR (SUCCESS VIEW) -->
+      <div id="proposal-success-box" class="hidden mt-4 text-center p-6 space-y-4">
+        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto text-2xl shadow-inner border border-emerald-200">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-black text-slate-900 leading-snug">Taklif uchun rahmat, admin siz bilan bog'lanadi!</h3>
+          <p class="text-xs text-slate-600 mt-2 max-w-sm mx-auto leading-relaxed">
+            Sizning tashabbusingiz Bosh Koordinator (Admin) paneliga yetkazildi. Taklif ko'rib chiqilib ma'qullanganda profilingizda tabrik bildirishnomasi paydo bo'ladi.
+          </p>
+        </div>
+        <button type="button" onclick="App.closeModal('modal-staff-proposal')" class="px-6 py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-black rounded-xl text-xs shadow-md transition">
+          Tushundim
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 16. TAKLIF MA'QULLANGANDA TABRIKLASH MODALI -->
+  <div id="modal-staff-approved-congrats" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="fixed inset-0 modal-backdrop" onclick="App.closeModal('modal-staff-approved-congrats')"></div>
+    <div class="relative bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl modal-content z-10 border border-slate-100 text-center space-y-4">
+      <div class="w-20 h-20 bg-gradient-to-tr from-amber-400 to-emerald-400 text-white rounded-3xl flex items-center justify-center mx-auto text-3xl shadow-lg shadow-emerald-200 animate-bounce">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200 mb-2">
+          Rasmiy Tasdiq
+        </span>
+        <h3 class="text-xl font-black text-slate-900">Tabriklaymiz, taklifingiz ma'qullandi!</h3>
+        <p id="approved-congrats-text" class="text-xs text-slate-600 mt-2 leading-relaxed">
+          Siz tomoningizdan yuborilgan tashabbus Bosh Koordinator tomonidan ko'rib chiqildi va rasman ma'qullandi!
+        </p>
+      </div>
+      <div class="pt-2">
+        <button type="button" onclick="App.closeModal('modal-staff-approved-congrats')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-sm shadow-md transition">
+          Ajoyib! Rahmat
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Bildirishnomalar Idishi -->
   <div id="toast-container"></div>
 
-  <!-- SKRIPT FAYLLARI (Google Firebase v4.0 versiya bilan) -->
-  <script src="js/data.js?v=4.0_firebase"></script>
-  <script src="js/auth.js?v=4.0_firebase"></script>
-  <script src="js/app.js?v=4.0_firebase"></script>
+  <!-- SKRIPT FAYLLARI (Google Firebase v5.0 Tezkor Sinxron) -->
+  <script src="js/i18n.js?v=5.0_instant"></script>
+  <script src="js/data.js?v=5.0_instant"></script>
+  <script src="js/auth.js?v=5.0_instant"></script>
+  <script src="js/app.js?v=5.0_instant"></script>
 </body>
 </html>

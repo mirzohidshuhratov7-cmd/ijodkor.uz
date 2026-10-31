@@ -1,5 +1,5 @@
 /**
- * IJODKOR.UZ - Ma'lumotlar bazasi va Bulutli Sinxronlash tizimi
+ * Kelajak ijodkori - Ma'lumotlar bazasi va Bulutli Sinxronlash tizimi
  * 
  * Yangilanishlar:
  * 1. Barcha maktablar umumiy o'rta ta'lim maktablari ("15-umumiy o'rta ta'lim maktabi").
@@ -25,6 +25,8 @@ const STORAGE_KEY_ADMIN_INBOX = 'ijodkor_admin_inbox';
 const STORAGE_KEY_STAFF = 'ijodkor_staff_data';
 const STORAGE_KEY_CLOUD_ID = 'ijodkor_cloud_id';
 const STORAGE_KEY_VISITORS = 'ijodkor_visitors_stats';
+const STORAGE_KEY_ADMIN_PHONE = 'ijodkor_admin_phone';
+const STORAGE_KEY_PROPOSALS = 'ijodkor_staff_proposals';
 
 // Bosh koordinatorning rasmiy telefon raqami
 const COORDINATOR_PHONE = '+998 99 674 14 40';
@@ -133,31 +135,14 @@ const INITIAL_CHALLENGES = [
 const INITIAL_SUBMISSIONS = [];
 
 // ==========================================================================
-// MASTER SERVER VA REAL-TIME GLOBAL SINXRONLASH (GUN DB + CLOUD RELAY)
+// GOOGLE FIREBASE REALTIME MASTER CLOUD DATABASE
 // ==========================================================================
 
-function serializeForGun(item) {
-  if (!item) return {};
-  const clean = { ...item };
-  if (Array.isArray(clean.eventsHistory)) {
-    try { clean.eventsHistory = JSON.stringify(clean.eventsHistory); } catch (e) { clean.eventsHistory = '[]'; }
-  }
-  return clean;
-}
-
-function deserializeFromGun(item) {
-  if (!item) return {};
-  const clean = { ...item };
-  if (typeof clean.eventsHistory === 'string') {
-    try { clean.eventsHistory = JSON.parse(clean.eventsHistory); } catch (e) { clean.eventsHistory = []; }
-  }
-  return clean;
-}
+const FIREBASE_DB_URL = 'https://ijodkor-d22cd-default-rtdb.asia-southeast1.firebasedatabase.app';
 
 const CloudSync = {
-  masterChannel: 'ijodkor_uz_live_v3',
-  gun: null,
-  gunHub: null,
+  dbUrl: FIREBASE_DB_URL,
+  db: null,
   isOnline: true,
   lastSyncTime: null,
   statusListeners: [],
@@ -173,125 +158,470 @@ const CloudSync = {
   },
 
   init() {
-    this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
+    this.notify({ status: 'syncing', text: 'Google Firebase ulanmoqda...', mode: 'Firebase' });
 
-    if (typeof Gun !== 'undefined') {
+    if (typeof firebase !== 'undefined' && firebase.database) {
       try {
-        this.gun = Gun({
-          peers: [
-            'https://gun-manhattan.herokuapp.com/gun',
-            'https://relay.peer.ooo/gun',
-            'https://peer.wallie.io/gun'
-          ]
-        });
-        this.gunHub = this.gun.get(this.masterChannel);
+        if (!firebase.apps || !firebase.apps.length) {
+          firebase.initializeApp({
+            apiKey: "AIzaSyDummyKeyForOpenRulesTestMode",
+            projectId: "ijodkor-d22cd",
+            databaseURL: this.dbUrl
+          });
+        }
+        try {
+          this.db = firebase.app().database(this.dbUrl);
+        } catch (e1) {
+          try {
+            this.db = firebase.database(firebase.app(), this.dbUrl);
+          } catch (e2) {
+            this.db = firebase.database();
+          }
+        }
+        this.notify({ status: 'connected', text: 'Server: Google Firebase (Ulangan)', mode: 'Firebase Cloud' });
 
-        // 1. Yangi o'quvchilarni real vaqtda eshitish va qabul qilish
-        this.gunHub.get('creators').map().on((creator, key) => {
-          if (creator && creator.id) {
-            DataStore.mergeRemoteCreator(creator);
+        // 1. O'quvchilarni real vaqtda eshitish
+        this.db.ref('creators').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            const list = Object.values(val).filter(c => c && !c._deleted);
+            localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(list));
+            if (window.App && typeof window.App.renderCreators === 'function') {
+              window.App.renderCreators();
+              window.App.renderLeaderboard();
+              window.App.renderAdminSection();
+            }
           }
         });
 
         // 2. Video rolik (chellenj)larni real vaqtda eshitish
-        this.gunHub.get('submissions').map().on((sub, key) => {
-          if (sub && sub.id) {
-            DataStore.mergeRemoteSubmission(sub);
+        this.db.ref('submissions').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            const list = Object.values(val).filter(s => s && !s._deleted);
+            localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(list));
+            if (window.App && typeof window.App.renderChallenges === 'function') {
+              window.App.renderChallenges();
+              window.App.renderAdminSection();
+            }
           }
         });
 
         // 3. Madaniyat xodimlarini real vaqtda eshitish
-        this.gunHub.get('staff').map().on((stf, key) => {
-          if (stf && stf.id) {
-            DataStore.mergeRemoteStaff(stf);
+        this.db.ref('staff').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            const list = Object.values(val).filter(s => s && !s._deleted);
+            localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(list));
+            if (window.App && typeof window.App.renderStaffSection === 'function') {
+              window.App.renderStaffSection();
+              window.App.renderAdminSection();
+            }
           }
         });
 
-        // Dastlabki lokal ma'lumotlarni serverga uzatib qo'yish
-        setTimeout(() => {
-          this.syncLocalToCloud();
-        }, 1200);
+        // 4. Tanlovlarni eshitish
+        this.db.ref('contests').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            localStorage.setItem(STORAGE_KEY_CONTESTS, JSON.stringify(Object.values(val)));
+            if (window.App && typeof window.App.renderContests === 'function') {
+              window.App.renderContests();
+            }
+          }
+        });
 
-        this.lastSyncTime = new Date();
-        this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
-      } catch (e) {
-        console.warn('GunDB ulanishda ogohlantirish:', e);
-        this.notify({ status: 'connected', text: 'Server: Faol (Mahalliy)', mode: 'Local' });
+        // 5. Chellenjlarni eshitish
+        this.db.ref('challenges').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(Object.values(val)));
+            if (window.App && typeof window.App.renderChallenges === 'function') {
+              window.App.renderChallenges();
+            }
+          }
+        });
+
+        // 6. Qiziqishlar va ko'rishlar soni
+        this.db.ref('visitors').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val && typeof val.total === 'number') {
+            localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(val));
+            if (window.App && typeof window.App.renderStats === 'function') {
+              window.App.renderStats();
+            }
+          }
+        });
+
+        // 7. Admin Inbox (SMS tasdiqlash kodlari)
+        this.db.ref('adminInbox').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(Object.values(val)));
+            if (window.App && typeof window.App.updateInboxBadge === 'function') {
+              window.App.updateInboxBadge();
+            }
+          }
+        });
+
+        // 8. Madaniyat xodimlari taklif va tashabbuslarini eshitish
+        this.db.ref('proposals').on('value', snapshot => {
+          const val = snapshot.val();
+          if (val) {
+            const list = Object.values(val).filter(p => p && !p._deleted);
+            localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(list));
+            if (window.App && typeof window.App.renderStaffProposals === 'function') {
+              window.App.renderStaffProposals();
+            }
+            if (window.App && typeof window.App.renderStaffSection === 'function') {
+              window.App.renderStaffSection();
+            }
+            if (window.App && typeof window.App.checkStaffApprovedProposals === 'function') {
+              window.App.checkStaffApprovedProposals();
+            }
+          }
+        });
+
+        // Dastlabki sinxronlash
+        setTimeout(() => {
+          this.pullAndSync();
+        }, 1000);
+
+        // Har 4 soniyada fonda REST orqali ham yangilab turish (100% kafolat)
+        setInterval(() => {
+          this.pullFromRest();
+        }, 4000);
+
+      } catch (err) {
+        console.warn('Firebase SDK xatosi, REST rejimga o\'tildi:', err);
+        this.initRestFallback();
       }
     } else {
-      this.notify({ status: 'connected', text: 'Server: Faol', mode: 'Local' });
+      this.initRestFallback();
     }
   },
 
-  syncLocalToCloud() {
-    if (!this.gunHub) return;
+  initRestFallback() {
+    this.notify({ status: 'connected', text: 'Server: Google Firebase (REST)', mode: 'REST' });
+    this.pullFromRest();
+    setInterval(() => {
+      this.pullFromRest();
+    }, 8000);
+  },
+
+  async pullFromRest() {
+    try {
+      const res = await fetch(`${this.dbUrl}/.json`);
+      if (res.ok) {
+        const root = await res.json();
+        if (root) {
+          if (root.creators) localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(Object.values(root.creators).filter(c => c && !c._deleted)));
+          if (root.submissions) localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(Object.values(root.submissions).filter(s => s && !s._deleted)));
+          if (root.staff) localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(Object.values(root.staff).filter(s => s && !s._deleted)));
+          if (root.contests) localStorage.setItem(STORAGE_KEY_CONTESTS, JSON.stringify(Object.values(root.contests)));
+          if (root.challenges) localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(Object.values(root.challenges)));
+          if (root.visitors) localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(root.visitors));
+          if (root.adminInbox) localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(Object.values(root.adminInbox)));
+          if (root.proposals) localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(Object.values(root.proposals).filter(p => p && !p._deleted)));
+          if (root.settings) {
+            if (root.settings.adminPhone) localStorage.setItem(STORAGE_KEY_ADMIN_PHONE, root.settings.adminPhone);
+            if (root.settings.adminName) localStorage.setItem(STORAGE_KEY_ADMIN_NAME, root.settings.adminName);
+          }
+          if (window.App && typeof window.App.refreshAllUI === 'function') {
+            window.App.refreshAllUI();
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('REST pull xatosi:', e);
+    }
+  },
+
+  async pullAndSync() {
+    if (this.db) {
+      try {
+        const snap = await this.db.ref('/').once('value');
+        const root = snap.val();
+        if (root) {
+          if (root.creators) localStorage.setItem(STORAGE_KEY_CREATORS, JSON.stringify(Object.values(root.creators).filter(c => c && !c._deleted)));
+          if (root.submissions) localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(Object.values(root.submissions).filter(s => s && !s._deleted)));
+          if (root.staff) localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(Object.values(root.staff).filter(s => s && !s._deleted)));
+          if (root.contests) localStorage.setItem(STORAGE_KEY_CONTESTS, JSON.stringify(Object.values(root.contests)));
+          if (root.challenges) localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(Object.values(root.challenges)));
+          if (root.visitors) localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(root.visitors));
+          if (root.adminInbox) localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(Object.values(root.adminInbox)));
+          if (root.proposals) localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(Object.values(root.proposals).filter(p => p && !p._deleted)));
+          if (root.settings) {
+            if (root.settings.adminPhone) localStorage.setItem(STORAGE_KEY_ADMIN_PHONE, root.settings.adminPhone);
+            if (root.settings.adminName) localStorage.setItem(STORAGE_KEY_ADMIN_NAME, root.settings.adminName);
+          }
+          if (window.App && typeof window.App.refreshAllUI === 'function') {
+            window.App.refreshAllUI();
+          }
+        } else {
+          // Baza bo'sh bo'lsa boshlang'ich tanlov va chellenjlarni saqlash
+          this.pushAllToCloud();
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+  },
+
+  push() {
+    this.pushAllToCloud();
+  },
+
+  pushAllToCloud() {
     try {
       const creators = DataStore.getCreators();
-      creators.forEach(c => {
-        this.broadcastCreator(c);
-      });
       const submissions = DataStore.getChallengeSubmissions();
-      submissions.forEach(s => {
-        this.broadcastSubmission(s);
-      });
       const staff = DataStore.getStaffList();
-      staff.forEach(st => {
-        this.broadcastStaff(st);
-      });
+      const contests = DataStore.getContests();
+      const challenges = DataStore.getChallenges();
+      const visitors = DataStore.getVisitorStats();
+      const adminInbox = JSON.parse(localStorage.getItem(STORAGE_KEY_ADMIN_INBOX) || '[]');
+
+      const creatorsObj = {};
+      creators.forEach(c => { if (c && c.id) creatorsObj[c.id] = c; });
+
+      const submissionsObj = {};
+      submissions.forEach(s => { if (s && s.id) submissionsObj[s.id] = s; });
+
+      const staffObj = {};
+      staff.forEach(st => { if (st && st.id) staffObj[st.id] = st; });
+
+      const contestsObj = {};
+      contests.forEach(cn => { if (cn && cn.id) contestsObj[cn.id] = cn; });
+
+      const challengesObj = {};
+      challenges.forEach(ch => { if (ch && ch.id) challengesObj[ch.id] = ch; });
+
+      const inboxObj = {};
+      adminInbox.forEach(m => { if (m && m.id) inboxObj[m.id] = m; });
+
+      const proposals = DataStore.getStaffProposals();
+      const proposalsObj = {};
+      proposals.forEach(p => { if (p && p.id) proposalsObj[p.id] = p; });
+
+      if (this.db) {
+        if (Object.keys(creatorsObj).length > 0) this.db.ref('creators').update(creatorsObj);
+        if (Object.keys(submissionsObj).length > 0) this.db.ref('submissions').update(submissionsObj);
+        if (Object.keys(staffObj).length > 0) this.db.ref('staff').update(staffObj);
+        if (Object.keys(contestsObj).length > 0) this.db.ref('contests').update(contestsObj);
+        if (Object.keys(challengesObj).length > 0) this.db.ref('challenges').update(challengesObj);
+        if (Object.keys(proposalsObj).length > 0) this.db.ref('proposals').update(proposalsObj);
+        if (visitors && visitors.total) this.db.ref('visitors').set(visitors);
+        if (Object.keys(inboxObj).length > 0) this.db.ref('adminInbox').update(inboxObj);
+      } else {
+        fetch(`${this.dbUrl}/.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            creators: creatorsObj,
+            submissions: submissionsObj,
+            staff: staffObj,
+            contests: contestsObj,
+            challenges: challengesObj,
+            proposals: proposalsObj,
+            visitors: visitors,
+            adminInbox: inboxObj
+          })
+        }).catch(console.warn);
+      }
     } catch (e) {
-      console.warn('Lokal ma\'lumotlarni serverga yuborishda ogohlantirish:', e);
+      console.warn('Firebase push xatosi:', e);
     }
   },
 
   broadcastCreator(creator) {
-    if (!this.gunHub || !creator || !creator.id) return;
+    if (!creator || !creator.id) return;
     try {
-      const clean = serializeForGun(creator);
-      clean.updatedAt = new Date().toISOString();
-      this.gunHub.get('creators').get(creator.id).put(clean);
-    } catch (e) {
-      console.error('Gun broadcastCreator xatosi:', e);
-    }
+      creator.updatedAt = new Date().toISOString();
+      if (this.db) {
+        this.db.ref('creators/' + creator.id).set(creator);
+      }
+      fetch(`${this.dbUrl}/creators/${creator.id}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(creator)
+      }).catch(console.warn);
+    } catch (e) {}
   },
 
   broadcastDeleteCreator(creatorId) {
-    if (!this.gunHub || !creatorId) return;
+    if (!creatorId) return;
     try {
-      this.gunHub.get('creators').get(creatorId).put({ id: creatorId, _deleted: true, updatedAt: new Date().toISOString() });
+      if (this.db) {
+        this.db.ref('creators/' + creatorId).remove();
+      }
+      fetch(`${this.dbUrl}/creators/${creatorId}.json`, { method: 'DELETE' }).catch(console.warn);
     } catch (e) {}
   },
 
   broadcastSubmission(sub) {
-    if (!this.gunHub || !sub || !sub.id) return;
+    if (!sub || !sub.id) return;
     try {
-      const clean = { ...sub, updatedAt: new Date().toISOString() };
-      this.gunHub.get('submissions').get(sub.id).put(clean);
+      sub.updatedAt = new Date().toISOString();
+      if (this.db) {
+        this.db.ref('submissions/' + sub.id).set(sub);
+      }
+      fetch(`${this.dbUrl}/submissions/${sub.id}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub)
+      }).catch(console.warn);
+    } catch (e) {}
+  },
+
+  broadcastDeleteSubmission(subId) {
+    if (!subId) return;
+    try {
+      if (this.db) {
+        this.db.ref('submissions/' + subId).remove();
+      }
+      fetch(`${this.dbUrl}/submissions/${subId}.json`, { method: 'DELETE' }).catch(console.warn);
     } catch (e) {}
   },
 
   broadcastStaff(staff) {
-    if (!this.gunHub || !staff || !staff.id) return;
+    if (!staff || !staff.id) return;
     try {
-      const clean = { ...staff, updatedAt: new Date().toISOString() };
-      this.gunHub.get('staff').get(staff.id).put(clean);
+      staff.updatedAt = new Date().toISOString();
+      if (this.db) {
+        this.db.ref('staff/' + staff.id).set(staff);
+      }
+      fetch(`${this.dbUrl}/staff/${staff.id}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(staff)
+      }).catch(console.warn);
+    } catch (e) {}
+  },
+
+  broadcastDeleteStaff(staffId) {
+    if (!staffId) return;
+    try {
+      if (this.db) {
+        this.db.ref('staff/' + staffId).remove();
+      }
+      fetch(`${this.dbUrl}/staff/${staffId}.json`, { method: 'DELETE' }).catch(console.warn);
+    } catch (e) {}
+  },
+
+  broadcastContest(contest) {
+    if (!contest || !contest.id) return;
+    try {
+      if (this.db) {
+        this.db.ref('contests/' + contest.id).set(contest);
+      } else {
+        fetch(`${this.dbUrl}/contests/${contest.id}.json`, { method: 'PUT', body: JSON.stringify(contest) }).catch(console.warn);
+      }
+    } catch (e) {}
+  },
+
+  broadcastDeleteContest(contestId) {
+    if (!contestId) return;
+    try {
+      if (this.db) {
+        this.db.ref('contests/' + contestId).remove();
+      } else {
+        fetch(`${this.dbUrl}/contests/${contestId}.json`, { method: 'DELETE' }).catch(console.warn);
+      }
+    } catch (e) {}
+  },
+
+  broadcastProposal(proposal) {
+    if (!proposal || !proposal.id) return;
+    try {
+      proposal.updatedAt = new Date().toISOString();
+      if (this.db) {
+        this.db.ref('proposals/' + proposal.id).set(proposal);
+      }
+      fetch(`${this.dbUrl}/proposals/${proposal.id}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(proposal)
+      }).catch(console.warn);
+    } catch (e) {}
+  },
+
+  broadcastDeleteProposal(proposalId) {
+    if (!proposalId) return;
+    try {
+      if (this.db) {
+        this.db.ref('proposals/' + proposalId).remove();
+      }
+      fetch(`${this.dbUrl}/proposals/${proposalId}.json`, { method: 'DELETE' }).catch(console.warn);
+    } catch (e) {}
+  },
+
+  broadcastChallenge(challenge) {
+    if (!challenge || !challenge.id) return;
+    try {
+      if (this.db) {
+        this.db.ref('challenges/' + challenge.id).set(challenge);
+      } else {
+        fetch(`${this.dbUrl}/challenges/${challenge.id}.json`, { method: 'PUT', body: JSON.stringify(challenge) }).catch(console.warn);
+      }
+    } catch (e) {}
+  },
+
+  broadcastDeleteChallenge(challengeId) {
+    if (!challengeId) return;
+    try {
+      if (this.db) {
+        this.db.ref('challenges/' + challengeId).remove();
+      } else {
+        fetch(`${this.dbUrl}/challenges/${challengeId}.json`, { method: 'DELETE' }).catch(console.warn);
+      }
+    } catch (e) {}
+  },
+
+  broadcastInbox(smsItem) {
+    if (!smsItem || !smsItem.id) return;
+    try {
+      if (this.db) {
+        this.db.ref('adminInbox/' + smsItem.id).set(smsItem);
+      } else {
+        fetch(`${this.dbUrl}/adminInbox/${smsItem.id}.json`, { method: 'PUT', body: JSON.stringify(smsItem) }).catch(console.warn);
+      }
+    } catch (e) {}
+  },
+
+  broadcastVisitorVisit() {
+    const currentMonthKey = new Date().toISOString().slice(0, 7);
+    try {
+      if (this.db) {
+        this.db.ref('visitors').transaction(current => {
+          current = current || { total: 0, monthly: {} };
+          if (!current.monthly) current.monthly = {};
+          current.monthly[currentMonthKey] = (current.monthly[currentMonthKey] || 0) + 1;
+          current.total = (current.total || 0) + 1;
+          current.lastVisit = new Date().toISOString();
+          return current;
+        });
+      } else {
+        fetch(`${this.dbUrl}/visitors.json`).then(r => r.json()).then(data => {
+          data = data || { total: 0, monthly: {} };
+          if (!data.monthly) data.monthly = {};
+          data.monthly[currentMonthKey] = (data.monthly[currentMonthKey] || 0) + 1;
+          data.total = (data.total || 0) + 1;
+          fetch(`${this.dbUrl}/visitors.json`, { method: 'PUT', body: JSON.stringify(data) });
+        }).catch(console.warn);
+      }
     } catch (e) {}
   },
 
   async pull() {
-    this.notify({ status: 'syncing', text: 'Serverdan yangilanmoqda...' });
-    if (this.gunHub) {
-      this.syncLocalToCloud();
-    }
+    this.notify({ status: 'syncing', text: 'Firebase bazasidan yangilanmoqda...' });
+    await this.pullAndSync();
     setTimeout(() => {
-      this.notify({ status: 'connected', text: 'Server: Ulangan', mode: 'Master Hub' });
+      this.notify({ status: 'connected', text: 'Server: Google Firebase (Faol)', mode: 'Firebase Cloud' });
       if (window.App && typeof window.App.refreshAllUI === 'function') {
         window.App.refreshAllUI();
       }
     }, 500);
-  },
-
-  push() {
-    this.syncLocalToCloud();
   },
 
   getShareUrl() {
@@ -400,6 +730,11 @@ const DataStore = {
     stats.lastVisit = new Date().toISOString();
 
     localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(stats));
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastVisitorVisit) {
+        CloudSync.broadcastVisitorVisit();
+      }
+    } catch (e) {}
     return stats;
   },
 
@@ -440,6 +775,28 @@ const DataStore = {
   setAdminName(newName) {
     if (!newName || !newName.trim()) return false;
     localStorage.setItem(STORAGE_KEY_ADMIN_NAME, newName.trim());
+    return true;
+  },
+
+  getAdminPhone() {
+    this.init();
+    return localStorage.getItem(STORAGE_KEY_ADMIN_PHONE) || COORDINATOR_PHONE;
+  },
+
+  setAdminPhone(newPhone) {
+    if (!newPhone || !newPhone.trim()) return false;
+    const clean = newPhone.trim();
+    localStorage.setItem(STORAGE_KEY_ADMIN_PHONE, clean);
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.db) {
+        CloudSync.db.ref('settings/adminPhone').set(clean);
+      }
+      fetch(`${FIREBASE_DB_URL}/settings/adminPhone.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clean)
+      }).catch(console.warn);
+    } catch (e) {}
     return true;
   },
 
@@ -575,9 +932,14 @@ const DataStore = {
       ? creatorData.avatarUrl.trim()
       : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80';
 
+    const nick = (creatorData.nickname || '').trim() || (creatorData.fullName || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'ijodkor';
+    const pin = (creatorData.pin || '').trim() || '1234';
+
     const newCreator = {
       id: 'cre-' + Date.now(),
       fullName: (creatorData.fullName || '').trim() || "Yangi O'quvchi",
+      nickname: nick,
+      pin: pin,
       age: parseInt(creatorData.age) || 16,
       district: distId,
       districtLabel: distLabel,
@@ -593,7 +955,7 @@ const DataStore = {
       eventsHistory: [
         {
           id: 'ev-' + Date.now(),
-          eventName: "Ijodkor.uz saralash bonusi",
+          eventName: "Kelajak ijodkori saralash bonusi",
           coinsAwarded: parseInt(creatorData.initialCoins) || 10,
           date: new Date().toISOString().split('T')[0],
           note: "Tizimda o'zini ro'yxatdan o'tkazgani va ijodiy portfoliosi uchun"
@@ -604,6 +966,11 @@ const DataStore = {
 
     creators.unshift(newCreator);
     this.saveCreators(creators);
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastCreator) {
+        CloudSync.broadcastCreator(newCreator);
+      }
+    } catch (e) {}
     return newCreator;
   },
 
@@ -616,6 +983,9 @@ const DataStore = {
     let target = creators[index];
 
     if (updatedData.fullName) target.fullName = updatedData.fullName.trim();
+    if (updatedData.nickname !== undefined) target.nickname = updatedData.nickname.trim();
+    if (updatedData.phone !== undefined && updatedData.phone.trim()) target.phone = updatedData.phone.trim();
+    if (updatedData.pin !== undefined && updatedData.pin.trim().length >= 4) target.pin = updatedData.pin.trim();
     if (updatedData.age) target.age = parseInt(updatedData.age);
     if (updatedData.district) {
       target.district = updatedData.district.toLowerCase();
@@ -651,6 +1021,11 @@ const DataStore = {
 
     creators[index] = target;
     this.saveCreators(creators);
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastCreator) {
+        CloudSync.broadcastCreator(target);
+      }
+    } catch (e) {}
     return target;
   },
 
@@ -884,6 +1259,73 @@ const DataStore = {
     });
   },
 
+  findCreatorByPhone(phone) {
+    if (!phone) return null;
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length < 7) return null;
+    const creators = this.getCreators();
+    return creators.find(c => {
+      const cPhone = (c.phone || '').replace(/\D/g, '');
+      return cPhone.endsWith(cleanPhone.slice(-9)) || cleanPhone.endsWith(cPhone.slice(-9));
+    }) || null;
+  },
+
+  findCreatorByCredentials(identifier, pin) {
+    if (!identifier || !pin) return null;
+    const cleanId = identifier.trim().toLowerCase();
+    const cleanPhone = cleanId.replace(/\D/g, '');
+    const cleanPin = pin.trim();
+
+    const creators = this.getCreators();
+    return creators.find(c => {
+      // PIN tekshiruvi (agar avvalgi profilda pin bo'lmasa, har qanday 4+ xonali kod yoki 1234 qabul qilinadi)
+      const cPin = (c.pin || '').trim();
+      const pinMatches = cPin ? (cPin === cleanPin) : (cleanPin.length >= 4);
+      if (!pinMatches) return false;
+
+      // 1. Telefon raqam bo'yicha
+      if (cleanPhone.length >= 7) {
+        const cPhone = (c.phone || '').replace(/\D/g, '');
+        if (cPhone.endsWith(cleanPhone.slice(-9)) || cleanPhone.endsWith(cPhone.slice(-9))) {
+          return true;
+        }
+      }
+
+      // 2. Nik bo'yicha
+      if (c.nickname && c.nickname.trim().toLowerCase() === cleanId) {
+        return true;
+      }
+
+      // 3. To'liq ism bo'yicha
+      if (c.fullName && c.fullName.trim().toLowerCase() === cleanId) {
+        return true;
+      }
+      if (c.fullName && c.fullName.trim().toLowerCase().replace(/\s+/g, '') === cleanId.replace(/\s+/g, '')) {
+        return true;
+      }
+
+      // 4. Ismning birinchi qismi bo'yicha (masalan, "Azizbek")
+      const firstName = (c.fullName || '').trim().split(' ')[0].toLowerCase();
+      if (firstName && firstName === cleanId) {
+        return true;
+      }
+
+      return false;
+    }) || null;
+  },
+
+  resetStudentPin(phone, newPin) {
+    const creator = this.findCreatorByPhone(phone);
+    if (!creator) {
+      return { success: false, message: "Ushbu telefon raqami bilan profil topilmadi!" };
+    }
+    if (!newPin || newPin.trim().length < 4) {
+      return { success: false, message: "Yangi profil kodi kamida 4 ta belgidan iborat bo'lishi kerak!" };
+    }
+    const updated = this.updateCreator(creator.id, { pin: newPin.trim() });
+    return { success: true, creator: updated };
+  },
+
   // 8. MADANIYAT XODIMLARI (RAQAMLAR FAQAT ADMINGA KO'RINADI)
   getStaffList() {
     this.init();
@@ -897,18 +1339,26 @@ const DataStore = {
 
   addStaffMember(staffData) {
     const staffList = this.getStaffList();
-    const existingIndex = staffList.findIndex(s => s.phone === staffData.phone);
+    const cleanPhone = (staffData.phone || '').trim();
+    const existingIndex = staffList.findIndex(s => {
+      const sp = (s.phone || '').replace(/\D/g, '');
+      const cp = cleanPhone.replace(/\D/g, '');
+      return sp && cp && (sp.endsWith(cp.slice(-9)) || cp.endsWith(sp.slice(-9)));
+    });
+
+    const id = existingIndex >= 0 ? staffList[existingIndex].id : ('stf-' + Date.now());
     const newStaff = {
-      id: 'stf-' + Date.now(),
+      id: id,
       fullName: staffData.fullName.trim(),
-      position: staffData.position.trim(),
-      organization: staffData.organization.trim(),
-      phone: staffData.phone.trim(),
-      registeredAt: new Date().toISOString().split('T')[0]
+      position: staffData.position ? staffData.position.trim() : 'Madaniyat Xodimi',
+      organization: staffData.organization ? staffData.organization.trim() : 'Madaniyat Boshqarmasi',
+      phone: cleanPhone,
+      pin: (staffData.pin || '').trim() || (existingIndex >= 0 && staffList[existingIndex].pin ? staffList[existingIndex].pin : '1234'),
+      registeredAt: (existingIndex >= 0 && staffList[existingIndex].registeredAt) ? staffList[existingIndex].registeredAt : new Date().toISOString().split('T')[0]
     };
 
     if (existingIndex >= 0) {
-      staffList[existingIndex] = newStaff;
+      staffList[existingIndex] = { ...staffList[existingIndex], ...newStaff };
     } else {
       staffList.unshift(newStaff);
     }
@@ -916,6 +1366,85 @@ const DataStore = {
     localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(staffList));
     CloudSync.push();
     return newStaff;
+  },
+
+  updateStaffMember(id, updatedData) {
+    const staffList = this.getStaffList();
+    const index = staffList.findIndex(s => s.id === id);
+    if (index === -1) return null;
+
+    let target = staffList[index];
+    if (updatedData.fullName) target.fullName = updatedData.fullName.trim();
+    if (updatedData.position) target.position = updatedData.position.trim();
+    if (updatedData.organization) target.organization = updatedData.organization.trim();
+    if (updatedData.phone && updatedData.phone.trim()) target.phone = updatedData.phone.trim();
+    if (updatedData.pin && updatedData.pin.trim().length >= 4) target.pin = updatedData.pin.trim();
+
+    staffList[index] = target;
+    localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(staffList));
+    CloudSync.push();
+    return target;
+  },
+
+  findStaffByPhone(phone) {
+    if (!phone) return null;
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (cleanPhone.length < 7) return null;
+    const staffList = this.getStaffList();
+    return staffList.find(s => {
+      const sPhone = (s.phone || '').replace(/\D/g, '');
+      return sPhone.endsWith(cleanPhone.slice(-9)) || cleanPhone.endsWith(sPhone.slice(-9));
+    }) || null;
+  },
+
+  findStaffByCredentials(identifier, pin) {
+    if (!identifier || !pin) return null;
+    const cleanId = identifier.trim().toLowerCase();
+    const cleanPhone = cleanId.replace(/\D/g, '');
+    const cleanPin = pin.trim();
+
+    const staffList = this.getStaffList();
+    return staffList.find(s => {
+      const sPin = (s.pin || '').trim();
+      const pinMatches = sPin ? (sPin === cleanPin) : (cleanPin.length >= 4);
+      if (!pinMatches) return false;
+
+      // 1. Telefon raqam bo'yicha
+      if (cleanPhone.length >= 7) {
+        const sPhone = (s.phone || '').replace(/\D/g, '');
+        if (sPhone.endsWith(cleanPhone.slice(-9)) || cleanPhone.endsWith(sPhone.slice(-9))) {
+          return true;
+        }
+      }
+
+      // 2. To'liq ism bo'yicha
+      if (s.fullName && s.fullName.trim().toLowerCase() === cleanId) {
+        return true;
+      }
+      if (s.fullName && s.fullName.trim().toLowerCase().replace(/\s+/g, '') === cleanId.replace(/\s+/g, '')) {
+        return true;
+      }
+
+      // 3. Ismning birinchi qismi bo'yicha
+      const firstName = (s.fullName || '').trim().split(' ')[0].toLowerCase();
+      if (firstName && firstName === cleanId) {
+        return true;
+      }
+
+      return false;
+    }) || null;
+  },
+
+  resetStaffPin(phone, newPin) {
+    const staff = this.findStaffByPhone(phone);
+    if (!staff) {
+      return { success: false, message: "Ushbu telefon raqami bilan madaniyat xodimi topilmadi!" };
+    }
+    if (!newPin || newPin.trim().length < 4) {
+      return { success: false, message: "Yangi maxfiy kod kamida 4 ta belgidan iborat bo'lishi kerak!" };
+    }
+    const updated = this.updateStaffMember(staff.id, { pin: newPin.trim() });
+    return { success: true, staff: updated };
   },
 
   // 9. ADMIN INBOX
@@ -943,6 +1472,9 @@ const DataStore = {
 
     inbox.unshift(newItem);
     localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(inbox));
+    if (typeof CloudSync !== 'undefined' && CloudSync.broadcastInbox) {
+      CloudSync.broadcastInbox(newItem);
+    }
     CloudSync.push();
     return newItem;
   },
@@ -965,7 +1497,87 @@ const DataStore = {
     return true;
   },
 
-  // 10. ZAXIRA EKSPORT / IMPORT
+  // 10. MADANIYAT XODIMLARI TAKLIF VA TASHABBUSLARI
+  getStaffProposals() {
+    this.init();
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY_PROPOSALS));
+      return Array.isArray(data) ? data : [];
+    } catch (e) {
+      return [];
+    }
+  },
+
+  addStaffProposal(proposalData) {
+    const proposals = this.getStaffProposals();
+    const newProposal = {
+      id: 'prp-' + Date.now(),
+      staffId: proposalData.staffId || '',
+      staffName: (proposalData.staffName || 'Madaniyat Xodimi').trim(),
+      staffPosition: (proposalData.staffPosition || '').trim(),
+      staffOrg: (proposalData.staffOrg || '').trim(),
+      staffPhone: (proposalData.staffPhone || '').trim(),
+      category: proposalData.category || 'event', // 'event', 'challenge', 'nomination', 'initiative'
+      categoryLabel: proposalData.categoryLabel || 'Madaniy Tadbir',
+      title: proposalData.title.trim(),
+      description: proposalData.description.trim(),
+      recommendedStudentId: proposalData.recommendedStudentId || '',
+      recommendedStudentName: (proposalData.recommendedStudentName || '').trim(),
+      status: 'pending', // 'pending', 'approved', 'rejected'
+      adminNote: '',
+      submittedAt: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString()
+    };
+
+    proposals.unshift(newProposal);
+    localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(proposals));
+    CloudSync.push();
+
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastProposal) {
+        CloudSync.broadcastProposal(newProposal);
+      }
+    } catch (e) {}
+
+    return newProposal;
+  },
+
+  updateProposalStatus(id, newStatus, adminNote = '') {
+    let proposals = this.getStaffProposals();
+    const index = proposals.findIndex(p => p.id === id);
+    if (index === -1) return null;
+
+    proposals[index].status = newStatus;
+    if (adminNote) proposals[index].adminNote = adminNote;
+    proposals[index].updatedAt = new Date().toISOString();
+
+    localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(proposals));
+    CloudSync.push();
+
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastProposal) {
+        CloudSync.broadcastProposal(proposals[index]);
+      }
+    } catch (e) {}
+
+    return proposals[index];
+  },
+
+  deleteProposal(id) {
+    let proposals = this.getStaffProposals();
+    const target = proposals.find(p => p.id === id);
+    proposals = proposals.filter(p => p.id !== id);
+    localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(proposals));
+    CloudSync.push();
+    try {
+      if (typeof CloudSync !== 'undefined' && CloudSync.broadcastDeleteProposal) {
+        CloudSync.broadcastDeleteProposal(id);
+      }
+    } catch (e) {}
+    return true;
+  },
+
+  // 11. ZAXIRA EKSPORT / IMPORT
   exportFullBackup() {
     return JSON.stringify({
       version: '3.0',
@@ -975,6 +1587,7 @@ const DataStore = {
       challenges: this.getChallenges(),
       submissions: this.getChallengeSubmissions(),
       inbox: this.getAdminInbox(),
+      proposals: this.getStaffProposals(),
       staff: this.getStaffList(),
       visitors: this.getVisitorStats()
     }, null, 2);
@@ -989,6 +1602,7 @@ const DataStore = {
         if (Array.isArray(data.challenges)) localStorage.setItem(STORAGE_KEY_CHALLENGES, JSON.stringify(data.challenges));
         if (Array.isArray(data.submissions)) localStorage.setItem(STORAGE_KEY_CHALLENGE_SUBMISSIONS, JSON.stringify(data.submissions));
         if (Array.isArray(data.inbox)) localStorage.setItem(STORAGE_KEY_ADMIN_INBOX, JSON.stringify(data.inbox));
+        if (Array.isArray(data.proposals)) localStorage.setItem(STORAGE_KEY_PROPOSALS, JSON.stringify(data.proposals));
         if (Array.isArray(data.staff)) localStorage.setItem(STORAGE_KEY_STAFF, JSON.stringify(data.staff));
         if (data.visitors) localStorage.setItem(STORAGE_KEY_VISITORS, JSON.stringify(data.visitors));
         CloudSync.push();
