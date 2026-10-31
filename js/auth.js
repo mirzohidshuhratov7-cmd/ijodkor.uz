@@ -190,3 +190,7 @@ const Auth = {
     return !user || user.role === 'guest';
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.Auth = Auth;
+}

@@ -311,8 +311,6 @@ const App = {
       }
       if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
     }
-      if (adminInboxBtn) adminInboxBtn.classList.add('hidden');
-    }
   },
 
   handleLogout() {
@@ -2957,6 +2955,10 @@ const App = {
     }, 4000);
   }
 };
+
+if (typeof window !== 'undefined') {
+  window.App = App;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   App.init();

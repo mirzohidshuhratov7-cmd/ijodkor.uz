@@ -1619,5 +1619,7 @@ const DataStore = {
 DataStore.init();
 
 if (typeof window !== 'undefined') {
+  window.DataStore = DataStore;
+  window.CloudSync = CloudSync;
   CloudSync.init();
 }
